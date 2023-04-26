@@ -1,24 +1,15 @@
 #include "LevelScreen.h"
 #include "Game.h"
+#include "Enemy.h"
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, gameRunning(true)
+	, waveCount(1)
+	, enemyCount(1)
 {
 	Restart();
-
-	window = (*newGamePointer).GetWindow();
-	size_t windowWidth = (*window).getSize().x;
-
-	AssetManager::SetupText(waveCount, "GameFont", "Cyan", "Wave ");
-	waveCount.setPosition((windowWidth / 2.0f) - (waveCount.getLocalBounds().width / 2.0f), 75.0f);
-
-	AssetManager::SetupText(healthText, "GameFont", "Cyan", "HP: ");
-	healthText.setPosition(75.0f, 75.0f);
-
-	AssetManager::SetupText(timerText, "GameFont", "Cyan", "Time: ");
-	timerText.setPosition(windowWidth - 510.0f, 75.0f);
 }
 
 void LevelScreen::Update(sf::Time frameTime)
@@ -49,19 +40,13 @@ void LevelScreen::Update(sf::Time frameTime)
 
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
-	target.draw(waveCount);
-	target.draw(healthText);
-	target.draw(timerText);
-
-	player.Draw(target);
-
-	// TODO - Enemy Spawn Timers
-	/*
 	for (size_t i = 0; i < enemies.size(); ++i)
 	{
 		enemies[i]->Draw(target);
 	}
-	*/
+
+	player.Draw(target);
+
 }
 
 void LevelScreen::TriggerEndState(bool win)
@@ -71,11 +56,15 @@ void LevelScreen::TriggerEndState(bool win)
 	// TODO - End panel
 }
 
+int LevelScreen::GetWaveCount()
+{
+	return waveCount;
+}
+
 void LevelScreen::Restart()
 {
 	player.SetPosition(500.0f, 500.0f);
 	// Delete before clearing!
-	/*
 	for (size_t i = 0; i < enemies.size(); ++i)
 	{
 		delete enemies[i];
@@ -83,7 +72,6 @@ void LevelScreen::Restart()
 	}
 
 	enemies.clear();
-	*/
 
 	gameRunning = true;
 }

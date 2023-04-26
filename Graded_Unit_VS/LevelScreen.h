@@ -7,6 +7,7 @@
 
 class Game;
 class Platform;
+class Enemy;
 
 class LevelScreen :
 	public Screen
@@ -19,15 +20,17 @@ public:
 
 	void TriggerEndState(bool win);
 
+	int GetWaveCount();
+
 private:
 	void Restart();
 
 	Player player;
-	// std::vector<Enemy*> enemies;
+	std::vector<Enemy*> enemies;
+	int enemyCount;
+
 	bool gameRunning;
 
-	sf::Text waveCount;
-	sf::Text healthText;
-	sf::Text timerText;
+	int waveCount;
 	sf::RenderWindow* window;
 };

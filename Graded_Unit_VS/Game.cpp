@@ -50,7 +50,7 @@ void Game::Update()
 
 void Game::Draw()
 {
-	window.clear();
+	window.clear(sf::Color(20, 20, 50));
 
 	if (currentScreen != nullptr)
 		currentScreen->Draw(window);

@@ -105,6 +105,11 @@ sf::Vector2f Player::GetOldPosition()
     return oldPosition;
 }
 
+int Player::GetHealth()
+{
+    return currentHealth;
+}
+
 void Player::UpdateAcceleration()
 {
     const float ACCEL = 5000;

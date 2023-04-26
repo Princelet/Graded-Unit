@@ -12,6 +12,8 @@ public:
 
     sf::Vector2f GetOldPosition();
 
+    int GetHealth();
+
 private:
     void UpdateAcceleration();
 

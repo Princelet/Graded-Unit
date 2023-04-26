@@ -71,8 +71,8 @@ void AssetManager::SetupText(sf::Text& text, std::string font, std::string color
     }
     RequestFont(font);
     text.setFillColor(textColor);
-    text.setOutlineThickness(2.0f);
     text.setOutlineColor(sf::Color::Black);
+    text.setOutlineThickness(1.0f);
     text.setString(string);
 }
 
