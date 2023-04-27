@@ -17,7 +17,7 @@ Player::Player()
     , attack(1)
 {
     // Placeholder Texture
-    sprite.setTexture(AssetManager::RequestTexture("PlayerConcept"));
+    sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
 }
 
 void Player::Update(sf::Time frameTime)
