@@ -18,6 +18,8 @@ public:
 	void Update(sf::Time frameTime);
 	void Draw(sf::RenderTarget& target);
 
+	void EnemySpawn();
+
 	void TriggerEndState(bool win);
 
 	int GetWaveCount();

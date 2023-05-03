@@ -25,9 +25,7 @@ private:
     std::vector<sf::Texture> playerWalkSide;
     std::vector<sf::Texture> playerWalkDown;
     std::vector<sf::Texture> playerWalkUp;
-
-    sf::Time timePerFrame;
-    sf::Clock animationClock;
+    std::vector<sf::Texture> playerStill;
 
     int currentHealth;
     int maxHealth;

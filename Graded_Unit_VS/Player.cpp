@@ -15,15 +15,22 @@ Player::Player()
     , currentHealth(20)
     , maxHealth(30)
     , attack(1)
-    , animationClock()
 {
-    // Placeholder Texture
+    // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
+
+    // Assign still textures for easy access
+    playerStill.push_back(AssetManager::RequestTexture("PlayerFront"));
+    playerStill.push_back(AssetManager::RequestTexture("PlayerBack"));
+    playerStill.push_back(AssetManager::RequestTexture("PlayerSide"));
+    
+    // Set up walking animations
     AssetManager::SetupWalk("Side", playerWalkSide);
     AssetManager::SetupWalk("Down", playerWalkDown);
     AssetManager::SetupWalk("Up", playerWalkUp);
-    sprite.setOrigin(AssetManager::RequestTexture("PlayerSide").getSize().x/2, AssetManager::RequestTexture("PlayerSide").getSize().y/2);
 
+    // Set origin and scale
+    sprite.setOrigin(AssetManager::RequestTexture("PlayerSide").getSize().x/2, AssetManager::RequestTexture("PlayerSide").getSize().y/2);
     sprite.setScale(0.25f, 0.25f);
 }
 
@@ -111,78 +118,71 @@ void Player::HandleCollision(Object& otherObj)
 
 void Player::Animate()
 {
-    animationClock.restart();
     std::string lastPressed;
 
-
-    sf::Time timePassedThisFrame = animationClock.getElapsedTime();
-    if (timePassedThisFrame >= timePerFrame)
+    // For each direction, set scale and texture
+    // If continuously going same direction, alternate the sprite used
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        animationClock.restart();
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        sprite.setScale(0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkDown[0])
+            sprite.setTexture(playerWalkDown[1]);
+        else
+            sprite.setTexture(playerWalkDown[0]);
+        lastPressed = "Down";
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        sprite.setScale(0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkUp[0])
+            sprite.setTexture(playerWalkUp[1]);
+        else
+            sprite.setTexture(playerWalkUp[0]);
+        lastPressed = "Up";
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        sprite.setScale(0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkSide[0])
+            sprite.setTexture(playerWalkSide[1]);
+        else
+            sprite.setTexture(playerWalkSide[0]);
+        lastPressed = "Left";
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        sprite.setScale(-0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkSide[0])
+            sprite.setTexture(playerWalkSide[1]);
+        else
+            sprite.setTexture(playerWalkSide[0]);
+        lastPressed = "Right";
+    }
+    else
+    {
+        // Set Still Sprite and Scale based on last pressed key
+        // 0 = Down, 1 = Up, 2 = Side
+        if (lastPressed == "Up")
         {
             sprite.setScale(0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkDown[0])
-                sprite.setTexture(playerWalkDown[1]);
-            else
-                sprite.setTexture(playerWalkDown[0]);
-            lastPressed = "Down";
+            sprite.setTexture(playerStill[0]);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        else if (lastPressed == "Down")
         {
             sprite.setScale(0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkUp[0])
-                sprite.setTexture(playerWalkUp[1]);
-            else
-                sprite.setTexture(playerWalkUp[0]);
-            lastPressed = "Up";
+            sprite.setTexture(playerStill[1]);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        else if (lastPressed == "Left")
         {
             sprite.setScale(0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkSide[0])
-                sprite.setTexture(playerWalkSide[1]);
-            else
-                sprite.setTexture(playerWalkSide[0]);
-            lastPressed = "Left";
+            sprite.setTexture(playerStill[2]);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        else if (lastPressed == "Right")
         {
             sprite.setScale(-0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkSide[0])
-                sprite.setTexture(playerWalkSide[1]);
-            else
-                sprite.setTexture(playerWalkSide[0]);
-            lastPressed = "Right";
+            sprite.setTexture(playerStill[2]);
         }
-        else
-        {
-            if (lastPressed == "Up")
-            {
-                sprite.setScale(0.25f, 0.25f);
-                sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
-            }
-            else if (lastPressed == "Down")
-            {
-                sprite.setScale(0.25f, 0.25f);
-                sprite.setTexture(AssetManager::RequestTexture("PlayerBack"));
-            }
-            else if (lastPressed == "Left")
-            {
-                sprite.setScale(0.25f, 0.25f);
-                sprite.setTexture(AssetManager::RequestTexture("PlayerSide"));
-            }
-            else if (lastPressed == "Right")
-            {
-                sprite.setScale(-0.25f, 0.25f);
-                sprite.setTexture(AssetManager::RequestTexture("PlayerSide"));
-            }
-        }
-
     }
-
-
 }
 
 sf::Vector2f Player::GetOldPosition()
