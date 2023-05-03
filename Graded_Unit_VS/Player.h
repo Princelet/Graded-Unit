@@ -9,6 +9,7 @@ public:
 
     void Update(sf::Time frameTime) override;
     void HandleCollision(Object& otherObj) override;
+    void Animate();
 
     sf::Vector2f GetOldPosition();
 
@@ -20,6 +21,13 @@ private:
     sf::Vector2f oldPosition;
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
+
+    std::vector<sf::Texture> playerWalkSide;
+    std::vector<sf::Texture> playerWalkDown;
+    std::vector<sf::Texture> playerWalkUp;
+
+    sf::Time timePerFrame;
+    sf::Clock animationClock;
 
     int currentHealth;
     int maxHealth;

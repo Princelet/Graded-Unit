@@ -76,6 +76,12 @@ void AssetManager::SetupText(sf::Text& text, std::string font, std::string color
     text.setString(string);
 }
 
+void AssetManager::SetupWalk(std::string direction, std::vector<sf::Texture>& vector)
+{
+    vector.push_back(RequestTexture("Walk/" + direction + "A"));
+    vector.push_back(RequestTexture("Walk/" + direction + "B"));
+}
+
 void AssetManager::DestroyAllAssets()
 {
     textures.clear();

@@ -11,6 +11,7 @@ public:
 	static sf::SoundBuffer& RequestSoundBuffer(std::string assetName);
 
 	static void SetupText(sf::Text& text, std::string font, std::string color, std::string string);
+	static void SetupWalk(std::string direction, std::vector<sf::Texture>& vector);
 
 	static void DestroyAllAssets();
 

@@ -15,9 +15,16 @@ Player::Player()
     , currentHealth(20)
     , maxHealth(30)
     , attack(1)
+    , animationClock()
 {
     // Placeholder Texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
+    AssetManager::SetupWalk("Side", playerWalkSide);
+    AssetManager::SetupWalk("Down", playerWalkDown);
+    AssetManager::SetupWalk("Up", playerWalkUp);
+    sprite.setOrigin(AssetManager::RequestTexture("PlayerSide").getSize().x/2, AssetManager::RequestTexture("PlayerSide").getSize().y/2);
+
+    sprite.setScale(0.25f, 0.25f);
 }
 
 void Player::Update(sf::Time frameTime)
@@ -68,6 +75,8 @@ void Player::Update(sf::Time frameTime)
 
     // Two frames ago (on next frame)
     oldPosition = lastFramePos;
+
+    Animate();
 }
 
 void Player::HandleCollision(Object& otherObj)
@@ -98,6 +107,82 @@ void Player::HandleCollision(Object& otherObj)
     }
 
     SetPosition(newPos);
+}
+
+void Player::Animate()
+{
+    animationClock.restart();
+    std::string lastPressed;
+
+
+    sf::Time timePassedThisFrame = animationClock.getElapsedTime();
+    if (timePassedThisFrame >= timePerFrame)
+    {
+        animationClock.restart();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        {
+            sprite.setScale(0.25f, 0.25f);
+            if (sprite.getTexture() == &playerWalkDown[0])
+                sprite.setTexture(playerWalkDown[1]);
+            else
+                sprite.setTexture(playerWalkDown[0]);
+            lastPressed = "Down";
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        {
+            sprite.setScale(0.25f, 0.25f);
+            if (sprite.getTexture() == &playerWalkUp[0])
+                sprite.setTexture(playerWalkUp[1]);
+            else
+                sprite.setTexture(playerWalkUp[0]);
+            lastPressed = "Up";
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+            sprite.setScale(0.25f, 0.25f);
+            if (sprite.getTexture() == &playerWalkSide[0])
+                sprite.setTexture(playerWalkSide[1]);
+            else
+                sprite.setTexture(playerWalkSide[0]);
+            lastPressed = "Left";
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            sprite.setScale(-0.25f, 0.25f);
+            if (sprite.getTexture() == &playerWalkSide[0])
+                sprite.setTexture(playerWalkSide[1]);
+            else
+                sprite.setTexture(playerWalkSide[0]);
+            lastPressed = "Right";
+        }
+        else
+        {
+            if (lastPressed == "Up")
+            {
+                sprite.setScale(0.25f, 0.25f);
+                sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
+            }
+            else if (lastPressed == "Down")
+            {
+                sprite.setScale(0.25f, 0.25f);
+                sprite.setTexture(AssetManager::RequestTexture("PlayerBack"));
+            }
+            else if (lastPressed == "Left")
+            {
+                sprite.setScale(0.25f, 0.25f);
+                sprite.setTexture(AssetManager::RequestTexture("PlayerSide"));
+            }
+            else if (lastPressed == "Right")
+            {
+                sprite.setScale(-0.25f, 0.25f);
+                sprite.setTexture(AssetManager::RequestTexture("PlayerSide"));
+            }
+        }
+
+    }
+
+
 }
 
 sf::Vector2f Player::GetOldPosition()
