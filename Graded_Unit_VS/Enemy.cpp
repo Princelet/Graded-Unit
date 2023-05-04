@@ -52,19 +52,29 @@ void Enemy::Spawn(float newX, float newY)
 	{
 		enemyType = 2;
 	}
+	// If it isn't a starting wave...
 	else
 	{
-		// Temporary
-		enemyType = 0;
+		// Get a random number between 1 and 10
+		int typeNo = (rand() % 10);
 
-		// TODO - Random Enemy Types Code
-
-		// get a random number between 1 and 10
-		// if (number is 1 to 4) summon normal
-		// if (number is 5 to 7) summon slow
-		// if (number is 8 to 10) summon fast
-
-		// allows weighting to the normal enemies to avoid oversaturation of specials
+		// Find which kind we spawn 
+		if (typeNo >= 5 && typeNo < 8)
+		{
+			// Slow enemy
+			enemyType = 1;
+		}
+		else if (typeNo >= 8 && typeNo < 11)
+		{
+			// Fast enemy
+			enemyType = 2;
+		}
+		else
+		{
+			// Weighted to normal enemies to keep balance
+			// Also means if value is somehow out of bounds we just spawn a normal
+			enemyType = 0;
+		}
 	}
 
 
@@ -75,6 +85,7 @@ void Enemy::Spawn(float newX, float newY)
 		health = 1;
 		attack = 2;
 		sprite.setColor(sf::Color::Cyan);
+		sprite.setScale(0.25f, 0.25f);
 		break;
 
 	case 1:
@@ -82,6 +93,7 @@ void Enemy::Spawn(float newX, float newY)
 		health = 2;
 		attack = 3;
 		sprite.setColor(sf::Color::Red);
+		sprite.setScale(0.5f, 0.5f);
 		break;
 
 	case 2:
@@ -89,6 +101,7 @@ void Enemy::Spawn(float newX, float newY)
 		health = 1;
 		attack = 1;
 		sprite.setColor(sf::Color::Green);
+		sprite.setScale(0.1f, 0.1f);
 		break;
 	}
 

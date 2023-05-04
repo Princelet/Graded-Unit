@@ -14,6 +14,7 @@ public:
     sf::Vector2f GetOldPosition();
 
     int GetHealth();
+    void PickUp(std::string itemName);
 
 private:
     void UpdateAcceleration();
@@ -30,4 +31,7 @@ private:
     int currentHealth;
     int maxHealth;
     int attack;
+
+    int powerCounter;
+    bool hasShield;
 };

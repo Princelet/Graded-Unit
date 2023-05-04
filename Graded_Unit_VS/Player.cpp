@@ -15,6 +15,8 @@ Player::Player()
     , currentHealth(20)
     , maxHealth(30)
     , attack(1)
+    , powerCounter(0)
+    , hasShield(false)
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -32,6 +34,9 @@ Player::Player()
     // Set origin and scale
     sprite.setOrigin(playerStill[2].getSize().x/2, playerStill[2].getSize().y/2);
     sprite.setScale(0.25f, 0.25f);
+
+    collisionOffset = sf::Vector2f(-27.0f, -48.0f);
+    collisionScale = sf::Vector2f(1.1f, 1.0f);
 }
 
 void Player::Update(sf::Time frameTime)
@@ -84,6 +89,11 @@ void Player::Update(sf::Time frameTime)
     oldPosition = lastFramePos;
 
     Animate();
+
+    if (attack < 1)
+    {
+        --powerCounter;
+    }
 }
 
 void Player::HandleCollision(Object& otherObj)
@@ -115,7 +125,7 @@ void Player::Animate()
 
     // For each direction, set scale and texture
     // If continuously going same direction, alternate the sprite used
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
         sprite.setScale(0.25f, 0.25f);
         if (sprite.getTexture() == &playerWalkDown[0])
@@ -124,7 +134,7 @@ void Player::Animate()
             sprite.setTexture(playerWalkDown[0]);
         lastPressed = "Down";
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
         sprite.setScale(0.25f, 0.25f);
         if (sprite.getTexture() == &playerWalkUp[0])
@@ -133,7 +143,7 @@ void Player::Animate()
             sprite.setTexture(playerWalkUp[0]);
         lastPressed = "Up";
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         sprite.setScale(0.25f, 0.25f);
         if (sprite.getTexture() == &playerWalkSide[0])
@@ -144,7 +154,7 @@ void Player::Animate()
             sprite.setTexture(playerWalkSide[0]);
         lastPressed = "Left";
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
         sprite.setScale(-0.25f, 0.25f);
         if (sprite.getTexture() == &playerWalkSide[0])
@@ -192,6 +202,24 @@ int Player::GetHealth()
     return currentHealth;
 }
 
+void Player::PickUp(std::string itemName)
+{
+    // Activate correct ability for item
+    if (itemName == "health" && currentHealth != maxHealth)
+    {
+        currentHealth += 5;
+    }
+    if (itemName == "power")
+    {
+        attack = 9;
+        powerCounter = 1000;
+    }
+    if (itemName == "shield")
+    {
+        hasShield = true;
+    }
+}
+
 void Player::UpdateAcceleration()
 {
     const float ACCEL = 5200;
@@ -199,19 +227,19 @@ void Player::UpdateAcceleration()
     // Update acceleration
     acceleration.x = 0;
     acceleration.y = 0;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         acceleration.x = -ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
         acceleration.x = ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
         acceleration.y = -ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
         acceleration.y = ACCEL;
     }
