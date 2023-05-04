@@ -30,7 +30,7 @@ Player::Player()
     AssetManager::SetupWalk("Up", playerWalkUp);
 
     // Set origin and scale
-    sprite.setOrigin(AssetManager::RequestTexture("PlayerSide").getSize().x/2, AssetManager::RequestTexture("PlayerSide").getSize().y/2);
+    sprite.setOrigin(playerStill[2].getSize().x/2, playerStill[2].getSize().y/2);
     sprite.setScale(0.25f, 0.25f);
 }
 
@@ -88,7 +88,6 @@ void Player::Update(sf::Time frameTime)
 
 void Player::HandleCollision(Object& otherObj)
 {
-    const float JUMPSPEED = 800;
     sf::Vector2f depth = GetCollisionDepth(otherObj);
     sf::Vector2f newPos = GetPosition();
 
@@ -105,12 +104,6 @@ void Player::HandleCollision(Object& otherObj)
         newPos.y += depth.y;
         velocity.y = 0;
         acceleration.y = 0;
-
-        // If we collided from above
-        if (depth.y < 0)
-        {
-            velocity.y = -JUMPSPEED;
-        }
     }
 
     SetPosition(newPos);
@@ -145,7 +138,9 @@ void Player::Animate()
         sprite.setScale(0.25f, 0.25f);
         if (sprite.getTexture() == &playerWalkSide[0])
             sprite.setTexture(playerWalkSide[1]);
-        else
+        else if (sprite.getTexture() == &playerWalkSide[1])
+                sprite.setTexture(playerStill[2]);
+            else
             sprite.setTexture(playerWalkSide[0]);
         lastPressed = "Left";
     }
@@ -154,6 +149,8 @@ void Player::Animate()
         sprite.setScale(-0.25f, 0.25f);
         if (sprite.getTexture() == &playerWalkSide[0])
             sprite.setTexture(playerWalkSide[1]);
+        else if (sprite.getTexture() == &playerWalkSide[1])
+            sprite.setTexture(playerStill[2]);
         else
             sprite.setTexture(playerWalkSide[0]);
         lastPressed = "Right";
@@ -197,7 +194,7 @@ int Player::GetHealth()
 
 void Player::UpdateAcceleration()
 {
-    const float ACCEL = 5000;
+    const float ACCEL = 5200;
 
     // Update acceleration
     acceleration.x = 0;
