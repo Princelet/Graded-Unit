@@ -14,8 +14,3 @@ Block::Block(sf::Vector2f newPosition)
 Block::~Block()
 {
 }
-
-sf::Vector2f Block::GetPosition()
-{
-	return position;
-}

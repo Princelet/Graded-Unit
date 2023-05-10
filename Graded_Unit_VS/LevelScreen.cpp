@@ -130,7 +130,6 @@ void LevelScreen::BlockSpawn(int newBlockCount)
 	}
 }
 
-
 void LevelScreen::TriggerEndState(bool win)
 {
 	gameRunning = false;
@@ -173,19 +172,28 @@ void LevelScreen::Restart()
 	BlockSpawn(blockCount);
 
 
-	// Get enemy info from file
-	std::ifstream inFile;
-	inFile.open("Assets/EnemyData/EarlyLevelEnemies.txt");
-
-	// Read each character one by one...
-	char ch;
-
-	while (inFile >> std::noskipws >> ch)
+	// Hardcoded enemy counts
+	// If anything else, figure it out
+	if (waveCount == 1)
 	{
-		// TODO - Setup enemy count read in based on line
-		enemyCount = 3; // TEMP VALUE
+		enemyCount = 1;
 	}
-
-	// Close the file since we're done
-	inFile.close();
+	else if (waveCount == 2 || waveCount == 3 || waveCount == 4 || waveCount == 6)
+	{
+		enemyCount = 2;
+	}
+	else if (waveCount == 5 || waveCount == 7)
+	{
+		enemyCount = 3;
+	}
+	else if (waveCount == 8 || waveCount == 9)
+	{
+		enemyCount = 4;
+	}
+	else
+	{
+		// Get half the wave count in order to slowly increase difficulty from this point
+		// Rounding doesn't matter because it only makes a 1 enemy difference
+		enemyCount = waveCount / 2;
+	}
 }

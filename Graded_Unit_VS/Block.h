@@ -9,8 +9,6 @@ public:
     Block(sf::Vector2f newPosition);
     ~Block();
 
-    sf::Vector2f GetPosition();
-
 private:
     sf::Vector2f position;
 };
