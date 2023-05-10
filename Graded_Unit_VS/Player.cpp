@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "AssetManager.h"
+#include "AttackBox.h"
 
 enum class PhysicsType
 {
@@ -17,6 +18,8 @@ Player::Player()
     , attack(1)
     , powerCounter(0)
     , hasShield(false)
+    , atkPos()
+    , atkDistance(100)
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -32,7 +35,7 @@ Player::Player()
     AssetManager::SetupWalk("Up", playerWalkUp);
 
     // Set origin and scale
-    sprite.setOrigin(playerStill[2].getSize().x/2, playerStill[2].getSize().y/2);
+    sprite.setOrigin(playerStill[0].getSize().x/2, playerStill[0].getSize().y/2);
     sprite.setScale(0.25f, 0.25f);
 
     collisionOffset = sf::Vector2f(-27.0f, -48.0f);
@@ -90,6 +93,7 @@ void Player::Update(sf::Time frameTime)
 
     Animate();
 
+    // Power item countdown
     if (attack < 1)
     {
         --powerCounter;
@@ -117,6 +121,66 @@ void Player::HandleCollision(Object& otherObj)
     }
 
     SetPosition(newPos);
+}
+
+sf::Vector2f Player::GetOldPosition()
+{
+    return oldPosition;
+}
+
+int Player::GetHealth()
+{
+    return currentHealth;
+}
+
+void Player::PickUp(std::string itemName)
+{
+    // Activate correct ability for item
+    if (itemName == "health" && currentHealth != maxHealth)
+    {
+        currentHealth += 5;
+    }
+    if (itemName == "power")
+    {
+        attack = 9;
+        powerCounter = 1000;
+    }
+    if (itemName == "shield")
+    {
+        hasShield = true;
+    }
+}
+
+void Player::Attack()
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+    {
+        // Upward attack
+        atkPos.x = GetPosition().x;
+        atkPos.y = GetPosition().y - atkDistance;
+        new AttackBox(atkPos);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+    {
+        // Downward attack
+        atkPos.x = GetPosition().x;
+        atkPos.y = GetPosition().y + atkDistance;
+        new AttackBox(atkPos);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+    {
+        // Left attack
+        atkPos.x = GetPosition().x - atkDistance;
+        atkPos.y = GetPosition().y;
+        new AttackBox(atkPos);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+    {
+        // Right attack
+        atkPos.x = GetPosition().x + atkDistance;
+        atkPos.y = GetPosition().y;
+        new AttackBox(atkPos);
+    }
 }
 
 void Player::Animate()
@@ -149,8 +213,8 @@ void Player::Animate()
         if (sprite.getTexture() == &playerWalkSide[0])
             sprite.setTexture(playerWalkSide[1]);
         else if (sprite.getTexture() == &playerWalkSide[1])
-                sprite.setTexture(playerStill[2]);
-            else
+            sprite.setTexture(playerStill[2]);
+        else
             sprite.setTexture(playerWalkSide[0]);
         lastPressed = "Left";
     }
@@ -189,34 +253,6 @@ void Player::Animate()
             sprite.setScale(-0.25f, 0.25f);
             sprite.setTexture(playerStill[2]);
         }
-    }
-}
-
-sf::Vector2f Player::GetOldPosition()
-{
-    return oldPosition;
-}
-
-int Player::GetHealth()
-{
-    return currentHealth;
-}
-
-void Player::PickUp(std::string itemName)
-{
-    // Activate correct ability for item
-    if (itemName == "health" && currentHealth != maxHealth)
-    {
-        currentHealth += 5;
-    }
-    if (itemName == "power")
-    {
-        attack = 9;
-        powerCounter = 1000;
-    }
-    if (itemName == "shield")
-    {
-        hasShield = true;
     }
 }
 

@@ -7,7 +7,6 @@ Block::Block(sf::Vector2f newPosition)
 	sprite.setTexture(AssetManager::RequestTexture("PlayerConcept"));
 	collisionOffset = sf::Vector2f(0, -57.0f);
 	collisionScale = sf::Vector2f(1.0f, 0.25f);
-	position = newPosition;
 	SetPosition(newPosition);
 }
 

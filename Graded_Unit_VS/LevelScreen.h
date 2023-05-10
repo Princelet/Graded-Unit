@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include "Screen.h"
 #include "Player.h"
 #include "AssetManager.h"
@@ -19,7 +18,6 @@ public:
 	void Update(sf::Time frameTime);
 	void Draw(sf::RenderTarget& target);
 
-	void EnemySpawn(int enemyNo);
 	void BlockSpawn(int newBlockCount);
 	void TriggerEndState(bool win);
 
@@ -33,11 +31,15 @@ private:
 
 	std::vector<Enemy*> enemies;
 	std::vector<Block*> blocks;
+
 	int blockCount;
 	int enemyCount;
+	int waveCount;
+
+	int enemyNo;
+	int spawnTimer;
 
 	bool gameRunning;
 
-	int waveCount;
 	sf::RenderWindow* window;
 };

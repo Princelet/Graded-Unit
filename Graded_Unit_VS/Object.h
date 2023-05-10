@@ -40,10 +40,10 @@ protected:
 	bool alive;
 
 private:
+	sf::Vector2f position;
 	sf::Vector2f GetCollisionCentre();
 	float GetCircleColliderRadius();
 	sf::FloatRect GetAABB();
 
-	sf::Vector2f position;
 	bool colliding;
 };

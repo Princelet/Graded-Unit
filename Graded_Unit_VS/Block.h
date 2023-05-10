@@ -8,7 +8,4 @@ class Block :
 public:
     Block(sf::Vector2f newPosition);
     ~Block();
-
-private:
-    sf::Vector2f position;
 };

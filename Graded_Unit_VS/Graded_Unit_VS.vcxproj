@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AttackBox.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="EndPanel.cpp" />
@@ -35,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="AttackBox.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="EndPanel.h" />

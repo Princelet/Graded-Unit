@@ -9,14 +9,16 @@ public:
 
     void Update(sf::Time frameTime) override;
     void HandleCollision(Object& otherObj) override;
-    void Animate();
 
     sf::Vector2f GetOldPosition();
 
     int GetHealth();
     void PickUp(std::string itemName);
 
+    void Attack();
+
 private:
+    void Animate();
     void UpdateAcceleration();
 
     sf::Vector2f oldPosition;
@@ -34,4 +36,7 @@ private:
 
     int powerCounter;
     bool hasShield;
+
+    sf::Vector2f atkPos;
+    float atkDistance;
 };

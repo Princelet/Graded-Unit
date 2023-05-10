@@ -7,11 +7,13 @@ class Enemy :
     public Object
 {
 public:
-    Enemy();
+    Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel);
+
+    void Update(sf::Time frameTime) override;
 
     int GetEnemyType();
 
-    void Spawn(float newX, float newY);
+    void Spawn();
 
 private:
     LevelScreen* level;
@@ -19,11 +21,16 @@ private:
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
 
+    int spawnBounds;
     sf::Clock spawnClock;
-    float interval;
+    int interval;
     int enemyType;
 
     int health;
     int attack;
     int speed;
+
+    sf::RenderWindow* window;
+
+    std::vector<sf::Texture> enemyTextures;
 };

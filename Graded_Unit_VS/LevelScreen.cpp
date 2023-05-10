@@ -8,8 +8,11 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, gameRunning(true)
-	, waveCount(10)
+	, waveCount(1)
 	, enemyCount(1)
+	, enemyNo(0)
+	, spawnTimer(1000)
+	, window(newGamePointer->GetWindow())
 	//, endPanel(window, "Game Over", "Unedited Message!")
 {
 	Restart();
@@ -21,6 +24,30 @@ void LevelScreen::Update(sf::Time frameTime)
 	{
 		player.Update(frameTime);
 		player.SetColliding(false);
+
+		for (size_t i = 0; i < enemies.size(); ++i)
+		{
+			enemies[i]->Update(frameTime);
+		}
+
+		if (enemyCount > 0)
+		{
+
+			// Check if timer is 
+			if (spawnTimer > 0)
+			{
+				// Spawn the new enemy into the array
+				enemies.push_back(new Enemy(window, this));
+				enemies[enemyNo]->Spawn();
+
+				enemyNo++;
+			}
+			else
+			{
+				spawnTimer = (rand() % 1000) + 200;
+			}
+			--enemyCount;
+		}
 	}
 	else
 	{
@@ -42,53 +69,6 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	}
 
 	player.Draw(target);
-}
-
-void LevelScreen::EnemySpawn(int enemyNo)
-{
-	int currentEnemy = enemyNo - 1;
-
-	float windowX = (*window).getSize().x;
-	float windowY = (*window).getSize().y;
-
-	int maxY = windowY - 20;
-	int minY = windowY + 20;
-	int maxX = windowX - 20;
-	int minX = windowX + 20;
-
-	int side = (rand() % 4);
-	int x = 0;
-	int y = 0;
-
-	switch (side)
-	{
-	case 0:
-		// left
-		x = minX;
-		y = (rand() % maxY) + minY;
-		break;
-
-	case 1:
-		// right
-		x = maxX;
-		y = (rand() % maxY) + minY;
-		break;
-
-	case 2:
-		// top
-		x = (rand() % maxX) + minX;
-		y = minY;
-		break;
-
-	case 3:
-		// bottom
-		x = (rand() % maxX) + minX;
-		y = maxY;
-		break;
-	}
-
-	// Spawn the new enemy into the array
-	enemies[currentEnemy]->Spawn(x, y);
 }
 
 void LevelScreen::BlockSpawn(int newBlockCount)
@@ -155,6 +135,7 @@ void LevelScreen::Restart()
 		delete blocks[i];
 		blocks[i] = nullptr;
 	}
+	enemyNo = 0;
 
 	enemies.clear();
 	blocks.clear();
