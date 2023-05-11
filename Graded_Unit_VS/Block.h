@@ -6,6 +6,8 @@ class Block :
     public Object
 {
 public:
-    Block(sf::Vector2f newPosition);
+    Block();
     ~Block();
+
+    void Spawn();
 };

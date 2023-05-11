@@ -44,7 +44,7 @@ void Enemy::Update(sf::Time frameTime)
 	velocity.x -= velocity.x * DRAG * frameTime.asSeconds();
 	velocity.y -= velocity.y * DRAG * frameTime.asSeconds();
 
-	float accel = speed * 2000;
+	float accel = speed * 1000;
 
 	// Update acceleration
 	acceleration.x = 0;
@@ -180,8 +180,8 @@ void Enemy::Spawn()
 
 	// Select a random side
 	int side = (rand() % 4);
-	int x = window->getSize().x / 2;
-	int y = window->getSize().y / 2;
+	float x = window->getSize().x / 2;
+	float y = window->getSize().y / 2;
 
 	// Pick x and y using side
 	switch (side)

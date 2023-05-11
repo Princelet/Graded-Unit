@@ -18,7 +18,6 @@ public:
 	void Update(sf::Time frameTime);
 	void Draw(sf::RenderTarget& target);
 
-	void BlockSpawn(int newBlockCount);
 	void TriggerEndState(bool win);
 
 	int GetWaveCount();

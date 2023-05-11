@@ -20,4 +20,3 @@ private:
     sf::Clock gameClock;
     Screen* currentScreen;
 };
-

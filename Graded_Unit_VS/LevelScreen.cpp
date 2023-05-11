@@ -8,7 +8,7 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, gameRunning(true)
-	, waveCount(1)
+	, waveCount(7)
 	, enemyCount(1)
 	, enemyNo(0)
 	, spawnTimer(1000)
@@ -29,6 +29,38 @@ void LevelScreen::Update(sf::Time frameTime)
 		{
 			enemies[i]->Update(frameTime);
 		}
+
+		for (size_t i = 0; i < blocks.size(); ++i)
+		{
+			blocks[i]->Update(frameTime);
+			blocks[i]->SetColliding(false);
+
+			if (blocks[i]->CheckCollision(player))
+			{
+				player.SetColliding(true);
+				blocks[i]->SetColliding(true);
+				player.HandleCollision(*blocks[i]);
+			}
+		}
+
+		for (size_t i = 0; i < enemies.size(); ++i)
+		{
+			enemies[i]->Update(frameTime);
+			enemies[i]->SetColliding(false);
+
+			if (enemies[i]->CheckCollision(player))
+			{
+				player.SetColliding(true);
+				enemies[i]->SetColliding(true);
+				player.HandleCollision(*enemies[i]);
+				enemies[i]->HandleCollision(player);
+			}
+			
+			// TODO - Attackbox collision
+		}
+
+
+
 
 		if (enemyCount > 0)
 		{
@@ -71,45 +103,6 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	player.Draw(target);
 }
 
-void LevelScreen::BlockSpawn(int newBlockCount)
-{
-	// Define spacing for grid
-	const float X_SPACE = 50.0f;
-	const float Y_SPACE = 50.0f;
-	const float SCREEN_BORDER = 200.0f;
-
-	// Keep obstacles out of the introductory waves
-	if (waveCount > 5)
-	{
-		if (blocks.size() < blockCount)
-		{
-			// Randomly get value between 1 and something
-			// Place block that correct amount of X space and Y space from screen border 
-			// Check it isnt within other end border
-
-			for (int i = 0; i < blockCount; ++i)
-			{
-				int xPos = (rand() % 10);
-				int yPos = (rand() % 10);
-
-				for (int i = 0; i < blockCount; ++i)
-				{
-					do {
-						xPos = (rand() % 10);
-						yPos = (rand() % 10);
-					} while (xPos == blocks[i]->GetPosition().x && yPos == blocks[i]->GetPosition().y);
-				}
-
-				// Calculate the actual block position
-				float blockPosX = (X_SPACE * xPos) + SCREEN_BORDER;
-				float blockPosY = (Y_SPACE * yPos) + SCREEN_BORDER;
-
-				blocks.push_back(new Block(sf::Vector2f(blockPosX, blockPosY)));
-			}
-		}
-	}
-}
-
 void LevelScreen::TriggerEndState(bool win)
 {
 	gameRunning = false;
@@ -150,7 +143,21 @@ void LevelScreen::Restart()
 		blockCount += (rand() % 10);
 	}
 
-	BlockSpawn(blockCount);
+	// Keep obstacles out of the introductory waves
+	if (waveCount > 5)
+	{
+		if (blocks.size() < blockCount)
+		{
+			for (int i = 0; i < blockCount; ++i)
+			{
+				blocks.push_back(new Block);
+			}
+			for (size_t i = 0; i < blocks.size(); ++i)
+			{
+				blocks[i]->Spawn();
+			}
+		}
+	}
 
 
 	// Hardcoded enemy counts
