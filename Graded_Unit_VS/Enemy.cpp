@@ -46,6 +46,7 @@ void Enemy::Update(sf::Time frameTime)
 
 	float accel = speed * 1000;
 
+
 	// Update acceleration
 	acceleration.x = 0;
 	acceleration.y = 0;

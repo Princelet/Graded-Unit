@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include "AttackBox.h"
 
 class Player :
     public Object
@@ -11,6 +12,7 @@ public:
     void HandleCollision(Object& otherObj) override;
 
     sf::Vector2f GetOldPosition();
+    AttackBox GetAttackBox();
 
     int GetHealth();
     void PickUp(std::string itemName);
@@ -30,13 +32,14 @@ private:
     std::vector<sf::Texture> playerWalkUp;
     std::vector<sf::Texture> playerStill;
 
+    AttackBox attackBox;
+    int attackTimer;
+
     int currentHealth;
     int maxHealth;
     int attack;
 
     int powerCounter;
     bool hasShield;
-
-    sf::Vector2f atkPos;
     float atkDistance;
 };

@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "AssetManager.h"
-#include "AttackBox.h"
 
 enum class PhysicsType
 {
@@ -18,8 +17,9 @@ Player::Player()
     , attack(1)
     , powerCounter(0)
     , hasShield(false)
-    , atkPos()
+    , attackTimer(10)
     , atkDistance(100)
+    , attackBox(sf::Vector2f(0,0))
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -98,6 +98,11 @@ void Player::Update(sf::Time frameTime)
     {
         --powerCounter;
     }
+    // Power item countdown
+    if (attackTimer < 1)
+    {
+        --attackTimer;
+    }
 }
 
 void Player::HandleCollision(Object& otherObj)
@@ -128,6 +133,11 @@ sf::Vector2f Player::GetOldPosition()
     return oldPosition;
 }
 
+AttackBox Player::GetAttackBox()
+{
+    return attackBox;
+}
+
 int Player::GetHealth()
 {
     return currentHealth;
@@ -156,31 +166,25 @@ void Player::Attack()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
     {
         // Upward attack
-        atkPos.x = GetPosition().x;
-        atkPos.y = GetPosition().y - atkDistance;
-        new AttackBox(atkPos);
+        attackBox.SetPosition(GetPosition().x, GetPosition().y - atkDistance);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
     {
         // Downward attack
-        atkPos.x = GetPosition().x;
-        atkPos.y = GetPosition().y + atkDistance;
-        new AttackBox(atkPos);
+        attackBox.SetPosition(GetPosition().x, GetPosition().y + atkDistance);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
     {
         // Left attack
-        atkPos.x = GetPosition().x - atkDistance;
-        atkPos.y = GetPosition().y;
-        new AttackBox(atkPos);
+        attackBox.SetPosition(GetPosition().x - atkDistance, GetPosition().y);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
     {
         // Right attack
-        atkPos.x = GetPosition().x + atkDistance;
-        atkPos.y = GetPosition().y;
-        new AttackBox(atkPos);
+        attackBox.SetPosition(GetPosition().x + atkDistance, GetPosition().y);
     }
+    
+    attackTimer = 10;
 }
 
 void Player::Animate()

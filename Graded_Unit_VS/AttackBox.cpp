@@ -3,7 +3,6 @@
 
 AttackBox::AttackBox(sf::Vector2f newPosition)
 	: Object()
-    , lifeTime(30)
 {
     sprite.setTexture(AssetManager::RequestTexture("PlayerConcept"));
     // Set origin and scale
@@ -19,17 +18,6 @@ AttackBox::~AttackBox()
 {
 }
 
-void AttackBox::Draw()
-{
-}
-
-void AttackBox::Update()
-{
-    --lifeTime;
-    if (lifeTime == 0)
-        Die();
-}
-
 void AttackBox::HandleCollision(Object& otherObj)
 {
     /*
@@ -38,9 +26,4 @@ void AttackBox::HandleCollision(Object& otherObj)
         delete otherObj;
     }
     */
-}
-
-void AttackBox::Die()
-{
-    delete this;
 }

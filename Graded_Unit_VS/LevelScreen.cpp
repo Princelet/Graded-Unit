@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Enemy.h"
 #include "Block.h"
+#include "AttackBox.h"
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
@@ -55,8 +56,12 @@ void LevelScreen::Update(sf::Time frameTime)
 				player.HandleCollision(*enemies[i]);
 				enemies[i]->HandleCollision(player);
 			}
-			
-			// TODO - Attackbox collision
+
+			if (enemies[i]->CheckCollision(player.GetAttackBox()))
+			{
+				player.GetAttackBox().SetColliding(true);
+				enemies[i]->SetAlive(0);
+			}
 		}
 
 
@@ -101,6 +106,7 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	}
 
 	player.Draw(target);
+	player.GetAttackBox().Draw(target);
 }
 
 void LevelScreen::TriggerEndState(bool win)
