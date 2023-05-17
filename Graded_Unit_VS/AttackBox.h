@@ -7,7 +7,5 @@ class AttackBox :
 public:
     AttackBox(sf::Vector2f newPosition);
     ~AttackBox();
-
-    void HandleCollision(Object& otherObj) override;
 };
 

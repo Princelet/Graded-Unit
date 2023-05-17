@@ -24,6 +24,7 @@ void LevelScreen::Update(sf::Time frameTime)
 	if (gameRunning)
 	{
 		player.Update(frameTime);
+		player.GetAttackBox().Update(frameTime);
 		player.SetColliding(false);
 
 		for (size_t i = 0; i < enemies.size(); ++i)
@@ -49,23 +50,21 @@ void LevelScreen::Update(sf::Time frameTime)
 			enemies[i]->Update(frameTime);
 			enemies[i]->SetColliding(false);
 
-			if (enemies[i]->CheckCollision(player))
-			{
-				player.SetColliding(true);
-				enemies[i]->SetColliding(true);
-				player.HandleCollision(*enemies[i]);
-				enemies[i]->HandleCollision(player);
-			}
-
 			if (enemies[i]->CheckCollision(player.GetAttackBox()))
 			{
 				player.GetAttackBox().SetColliding(true);
-				enemies[i]->SetAlive(0);
+				enemies[i]->TakeDamage();
 			}
+
+			// THIS
+			/*
+			if (enemies[i]->GetHealth() == 0)
+			{
+				delete enemies[i];
+				enemies[i] = nullptr;
+			}
+			*/
 		}
-
-
-
 
 		if (enemyCount > 0)
 		{
@@ -84,6 +83,12 @@ void LevelScreen::Update(sf::Time frameTime)
 				spawnTimer = (rand() % 1000) + 200;
 			}
 			--enemyCount;
+		}
+
+		if (enemies.size() == 0)
+		{
+			++waveCount;
+			NewWave();
 		}
 	}
 	else
@@ -123,6 +128,13 @@ int LevelScreen::GetWaveCount()
 void LevelScreen::Restart()
 {
 	player.SetPosition(500.0f, 500.0f);
+	gameRunning = true;
+
+	NewWave();
+}
+
+void LevelScreen::NewWave()
+{
 	// Delete before clearing!
 	for (size_t i = 0; i < enemies.size(); ++i)
 	{
@@ -138,8 +150,6 @@ void LevelScreen::Restart()
 
 	enemies.clear();
 	blocks.clear();
-
-	gameRunning = true;
 
 
 	// Choose random number of blocks
@@ -164,7 +174,6 @@ void LevelScreen::Restart()
 			}
 		}
 	}
-
 
 	// Hardcoded enemy counts
 	// If anything else, figure it out

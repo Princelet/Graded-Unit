@@ -32,8 +32,11 @@ private:
     std::vector<sf::Texture> playerWalkUp;
     std::vector<sf::Texture> playerStill;
 
-    AttackBox attackBox;
-    int attackTimer;
+    AttackBox atkBox;
+    int atkTimer;
+    int atkCooldown;
+    std::string atkDir;
+    float atkDistance;
 
     int currentHealth;
     int maxHealth;
@@ -41,5 +44,4 @@ private:
 
     int powerCounter;
     bool hasShield;
-    float atkDistance;
 };

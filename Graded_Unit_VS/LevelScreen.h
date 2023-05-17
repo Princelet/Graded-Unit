@@ -24,6 +24,7 @@ public:
 
 private:
 	void Restart();
+	void NewWave();
 
 	Player player;
 	// EndPanel endPanel;

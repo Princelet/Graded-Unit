@@ -17,9 +17,10 @@ Player::Player()
     , attack(1)
     , powerCounter(0)
     , hasShield(false)
-    , attackTimer(10)
-    , atkDistance(100)
-    , attackBox(sf::Vector2f(0,0))
+    , atkTimer(10)
+    , atkDistance(50)
+    , atkBox(sf::Vector2f(0,0))
+    , atkCooldown(0)
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -92,16 +93,12 @@ void Player::Update(sf::Time frameTime)
     oldPosition = lastFramePos;
 
     Animate();
+    Attack();
 
     // Power item countdown
     if (attack < 1)
     {
         --powerCounter;
-    }
-    // Power item countdown
-    if (attackTimer < 1)
-    {
-        --attackTimer;
     }
 }
 
@@ -135,7 +132,7 @@ sf::Vector2f Player::GetOldPosition()
 
 AttackBox Player::GetAttackBox()
 {
-    return attackBox;
+    return atkBox;
 }
 
 int Player::GetHealth()
@@ -163,28 +160,69 @@ void Player::PickUp(std::string itemName)
 
 void Player::Attack()
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+    if (atkCooldown == 0)
     {
-        // Upward attack
-        attackBox.SetPosition(GetPosition().x, GetPosition().y - atkDistance);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+        {
+            // Upward attack
+            atkTimer = 10;
+            atkDir = "up";
+            atkCooldown = 1000;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+        {
+            // Downward attack
+            atkTimer = 10;
+            atkDir = "down";
+            atkCooldown = 1000;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+        {
+            // Left attack
+            atkTimer = 10;
+            atkDir = "left";
+            atkCooldown = 1000;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+        {
+            // Right attack
+            atkTimer = 10;
+            atkDir = "right";
+            atkCooldown = 1000;
+        }
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+    else
     {
-        // Downward attack
-        attackBox.SetPosition(GetPosition().x, GetPosition().y + atkDistance);
+        --atkCooldown;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+
+    // Outside so it sticks while it's alive
+    if (atkDir == "up")
     {
-        // Left attack
-        attackBox.SetPosition(GetPosition().x - atkDistance, GetPosition().y);
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y - atkDistance));
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+    if (atkDir == "down")
     {
-        // Right attack
-        attackBox.SetPosition(GetPosition().x + atkDistance, GetPosition().y);
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y + atkDistance));
     }
-    
-    attackTimer = 10;
+    if (atkDir == "left")
+    {
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x - atkDistance, GetPosition().y));
+    }
+    if (atkDir == "right")
+    {
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y));
+    }
+
+    if (atkTimer > 0)
+    {
+        --atkTimer;
+    }
+    else
+    {
+        atkDir = "none";
+        atkBox.SetPosition(sf::Vector2f(0.0f, -0.0f));
+    }
 }
 
 void Player::Animate()

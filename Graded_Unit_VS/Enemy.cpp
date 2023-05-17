@@ -16,6 +16,7 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	, attack(2)
 	, health(1)
 	, speed(2)
+	, damageCooldown(0)
 {
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemyFront"));
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemySide"));
@@ -46,11 +47,13 @@ void Enemy::Update(sf::Time frameTime)
 
 	float accel = speed * 1000;
 
-
 	// Update acceleration
 	acceleration.x = 0;
 	acceleration.y = 0;
 
+	// TODO - Different enemy AIs
+
+	/*
 	// Select a random side
 	int direction = (rand() % 4);
 
@@ -91,11 +94,22 @@ void Enemy::Update(sf::Time frameTime)
 	{
 		SetPosition(GetPosition().x, GetPosition().y - 150.0f);
 	}
+	*/
+
+	if (damageCooldown > 0)
+	{
+		--damageCooldown;
+	}
 }
 
 int Enemy::GetEnemyType()
 {
 	return enemyType;
+}
+
+int Enemy::GetHealth()
+{
+	return health;
 }
 
 void Enemy::Spawn()
@@ -213,4 +227,13 @@ void Enemy::Spawn()
 	}
 
 	SetPosition(x, y);
+}
+
+void Enemy::TakeDamage()
+{
+	if (damageCooldown == 0)
+	{
+		--health;
+		damageCooldown = 100;
+	}
 }

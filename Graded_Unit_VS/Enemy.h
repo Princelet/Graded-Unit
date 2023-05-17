@@ -12,8 +12,10 @@ public:
     void Update(sf::Time frameTime) override;
 
     int GetEnemyType();
+    int GetHealth();
 
     void Spawn();
+    void TakeDamage();
 
 private:
     LevelScreen* level;
@@ -26,6 +28,7 @@ private:
     int interval;
     int enemyType;
 
+    int damageCooldown;
     int health;
     int attack;
     int speed;
