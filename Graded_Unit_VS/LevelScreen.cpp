@@ -75,6 +75,7 @@ void LevelScreen::Update(sf::Time frameTime)
 
 				if (enemies[i]->GetHealth() == 0 && enemies[i] != nullptr)
 				{
+					delete enemies[i];
 					enemies[i] = nullptr;
 					--currEnemies;
 				}
