@@ -25,6 +25,7 @@ Graded Unit Devlog
 - Changed the early level enemy system to hardcoded numbers instead of a file for ease of access.
 - Added enemy spawning at last and created an attack box class to begin the actual fighting mechanics.
 - Struggled with getting the attack box to destroy itself after use.
+- Enemies currently all go down to the left instead of randomly like I was hoping they would.
 
 16/5
 - Removed code around getting the attack box to disappear in favour of keeping it and teleporting it around.
