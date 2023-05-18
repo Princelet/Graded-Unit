@@ -43,3 +43,4 @@ Graded Unit Devlog
 - Fixed the enemy health system.
 - Enemy invulnerability currently doesn't exist which makes this useless as they take damage every frame.
 - Player and enemies both currently vanish when touching the screen border.
+- Fixed a memory leak related to defeating enemies where enemies did not get deleted until the next wave.
