@@ -22,17 +22,12 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemySide"));
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemyBack"));
 
-	// Set origin and scale
-	sprite.setOrigin(enemyTextures[0].getSize().x / 2, enemyTextures[0].getSize().y / 2);
-	sprite.setScale(0.25f, 0.25f);
 	// TODO - Edit EnemySide to have same width as front and back to avoid stretching
+	sprite.setOrigin(enemyTextures[0].getSize().x / 2, enemyTextures[0].getSize().y / 2);
 	sprite.setTexture(enemyTextures[0]);
-
-	collisionOffset = sf::Vector2f(-27.0f, -48.0f);
-	collisionScale = sf::Vector2f(1.1f, 1.0f);
 }
 
-void Enemy::Update(sf::Time frameTime)
+void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f playerPos)
 {
 	const float DRAG = 20.0f;
 
@@ -51,55 +46,53 @@ void Enemy::Update(sf::Time frameTime)
 	acceleration.x = 0;
 	acceleration.y = 0;
 
+	CheckEdges(window);
+
 	// TODO - Different enemy AIs
-
-	/*
-	// Select a random side
-	int direction = (rand() % 4);
-
-	// Pick x and y using side
-	switch (direction)
+	if (playerPos.x < GetPosition().x)
 	{
-	case 0:
-		// left
 		acceleration.x = -accel;
-
-	case 1:
-		// right
-		acceleration.x = accel;
-
-	case 2:
-		// up
+	}
+	if (playerPos.y < GetPosition().y)
+	{
 		acceleration.y = -accel;
-
-	case 3:
-		// down
+	}
+	if (playerPos.x > GetPosition().x)
+	{
+		acceleration.x = accel;
+	}
+	if (playerPos.y > GetPosition().y)
+	{
 		acceleration.y = accel;
 	}
-
-	// Don't leave the screen
-	if (GetPosition().x < 0)
-	{
-		SetPosition(GetPosition().x + 150.0f, GetPosition().y);
-	}
-	if (GetPosition().x > (window->getSize().x + spawnBounds))
-	{
-		SetPosition(GetPosition().x - 150.0f, GetPosition().y);
-	}
-	if (GetPosition().y < 0)
-	{
-		SetPosition(GetPosition().x, GetPosition().y + 150.0f);
-	}
-	if (GetPosition().y > (window->getSize().y + spawnBounds))
-	{
-		SetPosition(GetPosition().x, GetPosition().y - 150.0f);
-	}
-	*/
 
 	if (damageCooldown > 0)
 	{
 		--damageCooldown;
 	}
+}
+
+void Enemy::HandleCollision(Object& otherObj)
+{
+	sf::Vector2f depth = GetCollisionDepth(otherObj);
+	sf::Vector2f newPos = GetPosition();
+
+	if (abs(depth.x) < abs(depth.y))
+	{
+		// Move in x direction
+		newPos.x += depth.x;
+		velocity.x = 0;
+		acceleration.x = 0;
+	}
+	else
+	{
+		// Move in y direction
+		newPos.y += depth.y;
+		velocity.y = 0;
+		acceleration.y = 0;
+	}
+
+	SetPosition(newPos);
 }
 
 int Enemy::GetEnemyType()
@@ -167,6 +160,7 @@ void Enemy::Spawn()
 		attack = 2;
 		sprite.setColor(sf::Color::Cyan);
 		sprite.setScale(0.3f, 0.3f);
+		collisionOffset = sf::Vector2f(-37.0f, -51.0f);
 		break;
 
 	case 1:
@@ -175,6 +169,7 @@ void Enemy::Spawn()
 		attack = 3;
 		sprite.setColor(sf::Color::Red);
 		sprite.setScale(0.4f, 0.4f);
+		collisionOffset = sf::Vector2f(-48.0f, -66.0f);
 		break;
 
 	case 2:
@@ -183,9 +178,11 @@ void Enemy::Spawn()
 		attack = 1;
 		sprite.setColor(sf::Color::Green);
 		sprite.setScale(0.2f, 0.2f);
+		collisionOffset = sf::Vector2f(-24.0f, -34.0f);
 		break;
 	}
 
+	collisionScale = sf::Vector2f(1.0f, 1.0f);
 
 	// Set edges of arena
 	int minX = spawnBounds;

@@ -14,8 +14,14 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, enemyNo(0)
 	, spawnTimer(1000)
 	, window(newGamePointer->GetWindow())
+	, currEnemies(1)
 	//, endPanel(window, "Game Over", "Unedited Message!")
 {
+	rectangle.setPosition(window->getSize().x / 2, window->getSize().y / 2 + 100.0f);
+	rectangle.setSize(sf::Vector2f(window->getSize().x - 400.0f, window->getSize().y - 300.0f));
+	rectangle.setOrigin(rectangle.getSize().x / 2, rectangle.getSize().y / 2);
+	rectangle.setFillColor(sf::Color::White);
+
 	Restart();
 }
 
@@ -23,18 +29,13 @@ void LevelScreen::Update(sf::Time frameTime)
 {
 	if (gameRunning)
 	{
-		player.Update(frameTime);
-		player.GetAttackBox().Update(frameTime);
+		player.Update(frameTime, window);
+		player.GetAttackBox().Update(frameTime, window);
 		player.SetColliding(false);
-
-		for (size_t i = 0; i < enemies.size(); ++i)
-		{
-			enemies[i]->Update(frameTime);
-		}
 
 		for (size_t i = 0; i < blocks.size(); ++i)
 		{
-			blocks[i]->Update(frameTime);
+			blocks[i]->Update(frameTime, window);
 			blocks[i]->SetColliding(false);
 
 			if (blocks[i]->CheckCollision(player))
@@ -43,32 +44,45 @@ void LevelScreen::Update(sf::Time frameTime)
 				blocks[i]->SetColliding(true);
 				player.HandleCollision(*blocks[i]);
 			}
+
+			for (size_t j = 0; j < enemies.size(); ++j)
+			{
+				if (enemies[j])
+				{
+					if (blocks[i]->CheckCollision((*enemies[j])))
+					{
+						(*enemies[j]).SetColliding(true);
+						blocks[i]->SetColliding(true);
+						(*enemies[j]).HandleCollision(*blocks[i]);
+					}
+				}
+			}
 		}
 
 		for (size_t i = 0; i < enemies.size(); ++i)
 		{
-			enemies[i]->Update(frameTime);
-			enemies[i]->SetColliding(false);
-
-			if (enemies[i]->CheckCollision(player.GetAttackBox()))
+			if (enemies[i])
 			{
-				player.GetAttackBox().SetColliding(true);
-				enemies[i]->TakeDamage();
-			}
+				enemies[i]->Update(frameTime, window, player.GetPosition());
+				enemies[i]->SetColliding(false);
 
-			// THIS
-			/*
-			if (enemies[i]->GetHealth() == 0)
-			{
-				delete enemies[i];
-				enemies[i] = nullptr;
+
+				if (enemies[i]->CheckCollision(player.GetAttackBox()))
+				{
+					player.GetAttackBox().SetColliding(true);
+					enemies[i]->TakeDamage();
+				}
+
+				if (enemies[i]->GetHealth() == 0 && enemies[i] != nullptr)
+				{
+					enemies[i] = nullptr;
+					--currEnemies;
+				}
 			}
-			*/
 		}
 
 		if (enemyCount > 0)
 		{
-
 			// Check if timer is 
 			if (spawnTimer > 0)
 			{
@@ -85,7 +99,7 @@ void LevelScreen::Update(sf::Time frameTime)
 			--enemyCount;
 		}
 
-		if (enemies.size() == 0)
+		if (currEnemies == 0)
 		{
 			++waveCount;
 			NewWave();
@@ -101,9 +115,12 @@ void LevelScreen::Update(sf::Time frameTime)
 
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
+	target.draw(rectangle);
+
 	for (size_t i = 0; i < enemies.size(); ++i)
 	{
-		enemies[i]->Draw(target);
+		if (enemies[i])
+			enemies[i]->Draw(target);
 	}
 	for (size_t i = 0; i < blocks.size(); ++i)
 	{
@@ -199,4 +216,6 @@ void LevelScreen::NewWave()
 		// Rounding doesn't matter because it only makes a 1 enemy difference
 		enemyCount = waveCount / 2;
 	}
+	// Current enemy count to detect how many exist
+	currEnemies = enemyCount;
 }

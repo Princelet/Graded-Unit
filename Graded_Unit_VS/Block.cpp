@@ -23,14 +23,15 @@ void Block::Spawn()
 	// Define spacing for grid
 	const float X_SPACE = 100.0f;
 	const float Y_SPACE = 100.0f;
-	const float SCREEN_BORDER = 200.0f;
+	const float SCREEN_BORDER_X = 200.0f;
+	const float SCREEN_BORDER_TOP = 300.0f;
 
-	int xPos = (rand() % 10);
-	int yPos = (rand() % 8);
+	int xPos = (rand() % 13);
+	int yPos = (rand() % 7);
 
 	// Calculate the actual block position
-	float x = (X_SPACE * xPos) + SCREEN_BORDER;
-	float y = (Y_SPACE * yPos) + SCREEN_BORDER;
+	float x = (X_SPACE * xPos) + SCREEN_BORDER_X;
+	float y = (Y_SPACE * yPos) + SCREEN_BORDER_TOP;
 
 	SetPosition(x, y);
 }

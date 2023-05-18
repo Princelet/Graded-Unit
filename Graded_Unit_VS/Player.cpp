@@ -43,7 +43,7 @@ Player::Player()
     collisionScale = sf::Vector2f(1.1f, 1.0f);
 }
 
-void Player::Update(sf::Time frameTime)
+void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
 {
     const float DRAG = 20.0f;
     const PhysicsType physics = PhysicsType::FORWARD_EULER;
@@ -92,6 +92,7 @@ void Player::Update(sf::Time frameTime)
     // Two frames ago (on next frame)
     oldPosition = lastFramePos;
 
+    CheckEdges(window);
     Animate();
     Attack();
 
@@ -160,7 +161,7 @@ void Player::PickUp(std::string itemName)
 
 void Player::Attack()
 {
-    if (atkCooldown == 0)
+    if (atkCooldown <= 0)
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
         {

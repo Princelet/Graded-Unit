@@ -9,7 +9,8 @@ class Enemy :
 public:
     Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel);
 
-    void Update(sf::Time frameTime) override;
+    void Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f playerPos);
+    void HandleCollision(Object& otherObj) override;
 
     int GetEnemyType();
     int GetHealth();

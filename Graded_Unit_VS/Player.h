@@ -8,7 +8,7 @@ class Player :
 public:
     Player();
 
-    void Update(sf::Time frameTime) override;
+    void Update(sf::Time frameTime, sf::RenderWindow* window) override;
     void HandleCollision(Object& otherObj) override;
 
     sf::Vector2f GetOldPosition();

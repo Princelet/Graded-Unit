@@ -13,8 +13,9 @@ public:
 	Object();
 	~Object();
 
-	virtual void Update(sf::Time frameTime);
+	virtual void Update(sf::Time frameTime, sf::RenderWindow* window);
 	virtual void Draw(sf::RenderTarget& target);
+	virtual void CheckEdges(sf::RenderWindow* window);
 
 	sf::Vector2f GetPosition();
 	virtual void SetPosition(sf::Vector2f newPosition);
@@ -41,6 +42,7 @@ protected:
 
 private:
 	sf::Vector2f position;
+	sf::Vector2f oldPosition;
 	sf::Vector2f GetCollisionCentre();
 	float GetCircleColliderRadius();
 	sf::FloatRect GetAABB();

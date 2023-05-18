@@ -36,10 +36,12 @@ private:
 	int enemyCount;
 	int waveCount;
 
+	int currEnemies;
 	int enemyNo;
 	int spawnTimer;
 
 	bool gameRunning;
 
 	sf::RenderWindow* window;
+	sf::RectangleShape rectangle;
 };

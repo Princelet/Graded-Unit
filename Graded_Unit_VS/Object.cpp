@@ -16,7 +16,7 @@ Object::~Object()
 {
 }
 
-void Object::Update(sf::Time frameTime)
+void Object::Update(sf::Time frameTime, sf::RenderWindow* window)
 {
 }
 
@@ -70,6 +70,21 @@ void Object::Draw(sf::RenderTarget& target)
 		default:
 			break;
 		}
+	}
+}
+
+void Object::CheckEdges(sf::RenderWindow* window)
+{
+	const float SCREEN_BORDER_X = 200.0f;
+	const float SCREEN_BORDER_TOP = 250.0f;
+	const float SCREEN_BORDER_BOTTOM = 100.0f;
+
+	if (position.x <= SCREEN_BORDER_X
+		|| position.y <= SCREEN_BORDER_TOP
+		|| position.x >= window->getSize().x - SCREEN_BORDER_X
+		|| position.y >= window->getSize().y - SCREEN_BORDER_BOTTOM)
+	{
+		SetPosition(oldPosition);
 	}
 }
 
