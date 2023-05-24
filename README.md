@@ -44,3 +44,10 @@ Graded Unit Devlog
 - Enemy invulnerability currently doesn't exist which makes this useless as they take damage every frame.
 - Player and enemies both currently vanish when touching the screen border.
 - Fixed a memory leak related to defeating enemies where enemies did not get deleted until the next wave.
+
+24/5
+- Added new attack sprites.
+- Fixed attack positions and set up attack box collision scales/offsets.
+- Added enemy health and invulnerability.
+- Gave enemy class an attack box for each enemy, currently they do not attack.
+- Confused by the enemies that sometimes are at the top left and why they ignore the spawn timer code.
