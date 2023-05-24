@@ -18,9 +18,10 @@ Player::Player()
     , powerCounter(0)
     , hasShield(false)
     , atkTimer(10)
-    , atkDistance(50)
+    , atkDistance(100)
     , atkBox(sf::Vector2f(0,0))
     , atkCooldown(0)
+    , damageCooldown(0)
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -136,6 +137,16 @@ AttackBox Player::GetAttackBox()
     return atkBox;
 }
 
+int Player::GetDamageCooldown()
+{
+    return damageCooldown;
+}
+
+void Player::ResetDamageCooldown()
+{
+    damageCooldown = 2000;
+}
+
 int Player::GetHealth()
 {
     return currentHealth;
@@ -169,6 +180,7 @@ void Player::Attack()
             atkTimer = 10;
             atkDir = "up";
             atkCooldown = 1000;
+            atkBox.SetRotation("up");
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
         {
@@ -176,6 +188,7 @@ void Player::Attack()
             atkTimer = 10;
             atkDir = "down";
             atkCooldown = 1000;
+            atkBox.SetRotation("down");
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
         {
@@ -183,6 +196,7 @@ void Player::Attack()
             atkTimer = 10;
             atkDir = "left";
             atkCooldown = 1000;
+            atkBox.SetRotation("left");
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
         {
@@ -190,6 +204,7 @@ void Player::Attack()
             atkTimer = 10;
             atkDir = "right";
             atkCooldown = 1000;
+            atkBox.SetRotation("right");
         }
     }
     else
@@ -222,8 +237,13 @@ void Player::Attack()
     else
     {
         atkDir = "none";
-        atkBox.SetPosition(sf::Vector2f(0.0f, -0.0f));
+        atkBox.SetPosition(sf::Vector2f(-100.0f, -100.0f));
     }
+}
+
+void Player::TakeDamage()
+{
+    --currentHealth;
 }
 
 void Player::Animate()

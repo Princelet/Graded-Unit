@@ -16,7 +16,11 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	, attack(2)
 	, health(1)
 	, speed(2)
-	, damageCooldown(0)
+	, damageCooldown(1000)
+	, atkBox(sf::Vector2f(0, 0))
+	, atkCooldown(1000)
+	, atkDistance(50)
+	, atkTimer(10)
 {
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemyFront"));
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemySide"));
@@ -69,7 +73,12 @@ void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f pl
 	if (damageCooldown > 0)
 	{
 		--damageCooldown;
+
+		// Invulnerability
+		sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 50));
 	}
+	else
+		sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 255));
 }
 
 void Enemy::HandleCollision(Object& otherObj)
@@ -103,6 +112,21 @@ int Enemy::GetEnemyType()
 int Enemy::GetHealth()
 {
 	return health;
+}
+
+int Enemy::GetDamageCooldown()
+{
+	return damageCooldown;
+}
+
+void Enemy::ResetDamageCooldown()
+{
+	damageCooldown = 1000;
+}
+
+AttackBox Enemy::GetAttackBox()
+{
+	return atkBox;
 }
 
 void Enemy::Spawn()
@@ -156,18 +180,18 @@ void Enemy::Spawn()
 	{
 	case 0:
 		speed = 2;
-		health = 1;
+		health = 2;
 		attack = 2;
-		sprite.setColor(sf::Color::Cyan);
+		sprite.setColor(sf::Color(20, 255, 150, 255));
 		sprite.setScale(0.3f, 0.3f);
 		collisionOffset = sf::Vector2f(-37.0f, -51.0f);
 		break;
 
 	case 1:
 		speed = 1;
-		health = 2;
+		health = 3;
 		attack = 3;
-		sprite.setColor(sf::Color::Red);
+		sprite.setColor(sf::Color(255, 60, 60, 255));
 		sprite.setScale(0.4f, 0.4f);
 		collisionOffset = sf::Vector2f(-48.0f, -66.0f);
 		break;
@@ -176,7 +200,7 @@ void Enemy::Spawn()
 		speed = 3;
 		health = 1;
 		attack = 1;
-		sprite.setColor(sf::Color::Green);
+		sprite.setColor(sf::Color(20, 150, 255, 255));
 		sprite.setScale(0.2f, 0.2f);
 		collisionOffset = sf::Vector2f(-24.0f, -34.0f);
 		break;
@@ -228,9 +252,72 @@ void Enemy::Spawn()
 
 void Enemy::TakeDamage()
 {
-	if (damageCooldown == 0)
+	--health;
+}
+
+void Enemy::Attack(sf::Vector2f playerPos)
+{
+	if (atkCooldown <= 0)
 	{
-		--health;
-		damageCooldown = 100;
+		if (playerPos.x < GetPosition().x)
+		{
+			// Upward attack
+			atkTimer = 10;
+			atkDir = "up";
+			atkCooldown = 1000;
+		}
+		if (playerPos.y < GetPosition().y)
+		{
+			// Downward attack
+			atkTimer = 10;
+			atkDir = "down";
+			atkCooldown = 1000;
+		}
+		if (playerPos.x > GetPosition().x)
+		{
+			// Left attack
+			atkTimer = 10;
+			atkDir = "left";
+			atkCooldown = 1000;
+		}
+		if (playerPos.y > GetPosition().y)
+		{
+			// Right attack
+			atkTimer = 10;
+			atkDir = "right";
+			atkCooldown = 1000;
+		}
+	}
+	else
+	{
+		--atkCooldown;
+	}
+
+	// Outside so it sticks while it's alive
+	if (atkDir == "up")
+	{
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y - atkDistance));
+	}
+	if (atkDir == "down")
+	{
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y + atkDistance));
+	}
+	if (atkDir == "left")
+	{
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x - atkDistance, GetPosition().y));
+	}
+	if (atkDir == "right")
+	{
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y));
+	}
+
+	if (atkTimer > 0)
+	{
+		--atkTimer;
+	}
+	else
+	{
+		atkDir = "none";
+		atkBox.SetPosition(sf::Vector2f(0.0f, -0.0f));
 	}
 }

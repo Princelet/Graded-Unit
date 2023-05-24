@@ -13,11 +13,14 @@ public:
 
     sf::Vector2f GetOldPosition();
     AttackBox GetAttackBox();
+    int GetDamageCooldown();
+    void ResetDamageCooldown();
 
     int GetHealth();
     void PickUp(std::string itemName);
 
     void Attack();
+    void TakeDamage();
 
 private:
     void Animate();
@@ -41,6 +44,8 @@ private:
     int currentHealth;
     int maxHealth;
     int attack;
+
+    int damageCooldown;
 
     int powerCounter;
     bool hasShield;

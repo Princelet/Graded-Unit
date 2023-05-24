@@ -70,7 +70,23 @@ void LevelScreen::Update(sf::Time frameTime)
 				if (enemies[i]->CheckCollision(player.GetAttackBox()))
 				{
 					player.GetAttackBox().SetColliding(true);
-					enemies[i]->TakeDamage();
+					
+					if (enemies[i]->GetDamageCooldown() == 0)
+					{
+						enemies[i]->ResetDamageCooldown();
+						enemies[i]->TakeDamage();
+					}
+				}
+
+				if (player.CheckCollision(enemies[i]->GetAttackBox()))
+				{
+					enemies[i]->GetAttackBox().SetColliding(true);
+
+					if (player.GetDamageCooldown() == 0)
+					{
+						player.ResetDamageCooldown();
+						player.TakeDamage();
+					}
 				}
 
 				if (enemies[i]->GetHealth() == 0 && enemies[i] != nullptr)
@@ -121,7 +137,10 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	for (size_t i = 0; i < enemies.size(); ++i)
 	{
 		if (enemies[i])
+		{
 			enemies[i]->Draw(target);
+			enemies[i]->GetAttackBox().Draw(target);
+		}
 	}
 	for (size_t i = 0; i < blocks.size(); ++i)
 	{

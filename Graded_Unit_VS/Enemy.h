@@ -1,7 +1,9 @@
 #pragma once
 #include "Object.h"
+#include "AttackBox.h"
 
 class LevelScreen;
+class Block;
 
 class Enemy :
     public Object
@@ -14,9 +16,14 @@ public:
 
     int GetEnemyType();
     int GetHealth();
+    int GetDamageCooldown();
+    void ResetDamageCooldown();
+
+    AttackBox GetAttackBox();
 
     void Spawn();
     void TakeDamage();
+    void Attack(sf::Vector2f playerPos);
 
 private:
     LevelScreen* level;
@@ -33,6 +40,12 @@ private:
     int health;
     int attack;
     int speed;
+
+    AttackBox atkBox;
+    int atkTimer;
+    int atkCooldown;
+    std::string atkDir;
+    float atkDistance;
 
     sf::RenderWindow* window;
 
