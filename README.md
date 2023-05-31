@@ -51,3 +51,10 @@ Graded Unit Devlog
 - Added enemy health and invulnerability.
 - Gave enemy class an attack box for each enemy, currently they do not attack.
 - Confused by the enemies that sometimes are at the top left and why they ignore the spawn timer code.
+
+31/5
+- Added some high score code to the game.
+- Added a banner sprite for the UI at the top of the screen.
+- Re-enabled the end panel code.
+- Enemies still don't attack so I can't test the game over code.
+- Struggling to get the enemies to attack at all, even if it's just on an interval...
