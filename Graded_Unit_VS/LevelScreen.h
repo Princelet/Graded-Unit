@@ -25,6 +25,7 @@ private:
 	void Restart();
 	void NewWave();
 	void GameOver();
+
 	std::string GetHighScores(int playerWave);
 	std::string AddToHighScores(int playerWave, int position);
 
@@ -46,4 +47,5 @@ private:
 
 	sf::RenderWindow* window;
 	sf::RectangleShape rectangle;
+	sf::Sprite banner;
 };

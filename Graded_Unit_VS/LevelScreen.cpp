@@ -23,6 +23,11 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	rectangle.setOrigin(rectangle.getSize().x / 2, rectangle.getSize().y / 2);
 	rectangle.setFillColor(sf::Color::White);
 
+	banner.setTexture(AssetManager::RequestTexture("TopUI"));
+	banner.scale(4.0f, 4.0f);
+	banner.setPosition(window->getSize().x / 2, banner.getTexture()->getSize().y / 2 + 100.0f);
+	banner.setOrigin(banner.getTexture()->getSize().x / 2, banner.getTexture()->getSize().y / 2);
+
 	Restart();
 }
 
@@ -137,6 +142,7 @@ void LevelScreen::Update(sf::Time frameTime)
 
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
+	target.draw(banner);
 	target.draw(rectangle);
 
 	for (size_t i = 0; i < enemies.size(); ++i)
