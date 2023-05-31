@@ -19,6 +19,7 @@ public:
 	void Update(sf::Time frameTime);
 	void Draw(sf::RenderTarget& target);
 
+	sf::RectangleShape GetArena();
 	int GetWaveCount();
 
 private:

@@ -61,3 +61,4 @@ Graded Unit Devlog
 - Added a visual cue to player invulnerability.
 - Made enemy attack boxes different colours.
 - Enemies seem to still be spawning out of bounds and from there just... sit there and don't exist? Wave can increment with a guy up in the corner.
+- Adjusted enemy spawning to use the arena instead of the screen. Doesn't fix issue yet however...

@@ -137,14 +137,6 @@ void LevelScreen::Update(sf::Time frameTime)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 			Restart();
 	}
-
-	// TODO - Player Health
-	/*
-	if (player.GetHealth() == 0)
-	{
-		GameOver();
-	}
-	*/
 }
 
 void LevelScreen::Draw(sf::RenderTarget& target)
@@ -167,6 +159,11 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 
 	player.Draw(target);
 	player.GetAttackBox().Draw(target);
+}
+
+sf::RectangleShape LevelScreen::GetArena()
+{
+	return rectangle;
 }
 
 int LevelScreen::GetWaveCount()

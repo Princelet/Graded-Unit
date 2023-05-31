@@ -223,39 +223,39 @@ void Enemy::Spawn()
 	// Set edges of arena
 	int minX = spawnBounds;
 	int minY = spawnBounds;
-	int maxX = window->getSize().x - spawnBounds;
-	int maxY = window->getSize().y - spawnBounds;
+	int maxX = (*level).GetArena().getSize().x - spawnBounds;
+	int maxY = (*level).GetArena().getSize().y - spawnBounds;
 
 	// Select a random side
 	int side = (rand() % 4);
-	float x = window->getSize().x / 2;
-	float y = window->getSize().y / 2;
+	float x = (*level).GetArena().getSize().x / 2;
+	float y = (*level).GetArena().getSize().y / 2;
 
 	// Pick x and y using side
 	switch (side)
 	{
 	case 0:
 		// left
-		x = minX;
+		x = minX - 100;
 		y = (rand() % maxY) + minY;
 		break;
 
 	case 1:
 		// right
-		x = maxX;
+		x = maxX + 100;
 		y = (rand() % maxY) + minY;
 		break;
 
 	case 2:
 		// top
 		x = (rand() % maxX) + minX;
-		y = minY;
+		y = minY + 100;
 		break;
 
 	case 3:
 		// bottom
 		x = (rand() % maxX) + minX;
-		y = maxY;
+		y = maxY - 100;
 		break;
 	}
 
