@@ -16,7 +16,7 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	, attack(2)
 	, health(1)
 	, speed(2)
-	, damageCooldown(1000)
+	, damageCooldown(0)
 	, atkBox(sf::Vector2f(0, 0))
 	, atkCooldown(1000)
 	, atkDistance(50)
@@ -79,6 +79,13 @@ void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f pl
 	}
 	else
 		sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 255));
+
+	if (atkCooldown > 0)
+	{
+		--atkCooldown;
+	}
+	else
+		Attack(playerPos);
 }
 
 void Enemy::HandleCollision(Object& otherObj)
@@ -257,40 +264,33 @@ void Enemy::TakeDamage()
 
 void Enemy::Attack(sf::Vector2f playerPos)
 {
-	if (atkCooldown <= 0)
+	if (playerPos.x < GetPosition().x)
 	{
-		if (playerPos.x < GetPosition().x)
-		{
-			// Upward attack
-			atkTimer = 10;
-			atkDir = "up";
-			atkCooldown = 1000;
-		}
-		if (playerPos.y < GetPosition().y)
-		{
-			// Downward attack
-			atkTimer = 10;
-			atkDir = "down";
-			atkCooldown = 1000;
-		}
-		if (playerPos.x > GetPosition().x)
-		{
-			// Left attack
-			atkTimer = 10;
-			atkDir = "left";
-			atkCooldown = 1000;
-		}
-		if (playerPos.y > GetPosition().y)
-		{
-			// Right attack
-			atkTimer = 10;
-			atkDir = "right";
-			atkCooldown = 1000;
-		}
+		// Upward attack
+		atkTimer = 10;
+		atkDir = "up";
+		atkCooldown = 1000;
 	}
-	else
+	if (playerPos.y < GetPosition().y)
 	{
-		--atkCooldown;
+		// Downward attack
+		atkTimer = 10;
+		atkDir = "down";
+		atkCooldown = 1000;
+	}
+	if (playerPos.x > GetPosition().x)
+	{
+		// Left attack
+		atkTimer = 10;
+		atkDir = "left";
+		atkCooldown = 1000;
+	}
+	if (playerPos.y > GetPosition().y)
+	{
+		// Right attack
+		atkTimer = 10;
+		atkDir = "right";
+		atkCooldown = 1000;
 	}
 
 	// Outside so it sticks while it's alive

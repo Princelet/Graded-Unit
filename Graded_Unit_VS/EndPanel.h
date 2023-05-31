@@ -13,8 +13,10 @@ public:
 
 	void SetPosition(sf::Vector2f newPosition) override;
 
-	void StartAnimation();
-	// void ResetPosition();
+	void StartAnimation(bool win);
+	void ResetPosition();
+	
+	void SetBody(std::string bodyText);
 
 private:
 	sf::Sprite background;

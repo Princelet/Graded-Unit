@@ -10,6 +10,7 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow, std::string titleText, std::stri
 	, window(newWindow)
 	, animatingIn(false)
 	, animationClock()
+	, xPos()
 {
 	background.setTexture(AssetManager::RequestTexture("GlassPanel"));
 	title.setFont(AssetManager::RequestFont("GameFont"));
@@ -26,7 +27,7 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow, std::string titleText, std::stri
 	message.setString(messageText);
 	message.setLineSpacing(1.5);
 
-	// ResetPosition();
+	ResetPosition();
 }
 
 void EndPanel::Update(sf::Time frameTime)
@@ -68,17 +69,20 @@ void EndPanel::SetPosition(sf::Vector2f newPosition)
 	message.setPosition(newPosition.x + messageX, newPosition.y + 150);
 }
 
-void EndPanel::StartAnimation()
+void EndPanel::StartAnimation(bool win)
 {
 	animatingIn = true;
 	animationClock.restart();
 }
 
-/*
 void EndPanel::ResetPosition()
 {
 	xPos = (window->getSize().x - background.getGlobalBounds().width) * 0.5f;
 	float yPos = (window->getSize().y - background.getGlobalBounds().height) * 0.5f;
 	SetPosition(sf::Vector2f(xPos, yPos));
 }
-*/
+
+void EndPanel::SetBody(std::string bodyText)
+{
+	message.setString(bodyText);
+}

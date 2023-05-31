@@ -31,7 +31,6 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Screen.cpp" />
-    <ClCompile Include="TopUI.cpp" />
     <ClCompile Include="VectorHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +45,6 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Screen.h" />
-    <ClInclude Include="TopUI.h" />
     <ClInclude Include="VectorHelper.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

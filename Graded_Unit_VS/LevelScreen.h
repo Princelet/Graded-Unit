@@ -3,11 +3,12 @@
 #include "Screen.h"
 #include "Player.h"
 #include "AssetManager.h"
-// #include "EndPanel.h"
+#include "EndPanel.h"
 
 class Game;
 class Enemy;
 class Block;
+class EndPanel;
 
 class LevelScreen :
 	public Screen
@@ -18,16 +19,17 @@ public:
 	void Update(sf::Time frameTime);
 	void Draw(sf::RenderTarget& target);
 
-	void TriggerEndState(bool win);
-
 	int GetWaveCount();
 
 private:
 	void Restart();
 	void NewWave();
+	void GameOver();
+	std::string GetHighScores(int playerWave);
+	std::string AddToHighScores(int playerWave, int position);
 
 	Player player;
-	// EndPanel endPanel;
+	EndPanel endPanel;
 
 	std::vector<Enemy*> enemies;
 	std::vector<Block*> blocks;
