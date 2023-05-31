@@ -22,6 +22,7 @@ Player::Player()
     , atkBox(sf::Vector2f(0,0))
     , atkCooldown(0)
     , damageCooldown(0)
+    , baseAtkCooldown(600)
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -102,6 +103,16 @@ void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
     {
         --powerCounter;
     }
+
+    if (damageCooldown > 0)
+    {
+        --damageCooldown;
+
+        // Invulnerability
+        sprite.setColor(sf::Color(255, 255, 255, 50));
+    }
+    else
+        sprite.setColor(sf::Color(255, 255, 255, 255));
 }
 
 void Player::HandleCollision(Object& otherObj)
@@ -144,7 +155,7 @@ int Player::GetDamageCooldown()
 
 void Player::ResetDamageCooldown()
 {
-    damageCooldown = 2000;
+    damageCooldown = 500;
 }
 
 int Player::GetHealth()
@@ -179,32 +190,32 @@ void Player::Attack()
             // Upward attack
             atkTimer = 10;
             atkDir = "up";
-            atkCooldown = 1000;
-            atkBox.SetRotation("up");
+            atkCooldown = baseAtkCooldown;
+            atkBox.SetRotation(atkDir);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
         {
             // Downward attack
             atkTimer = 10;
             atkDir = "down";
-            atkCooldown = 1000;
-            atkBox.SetRotation("down");
+            atkCooldown = baseAtkCooldown;
+            atkBox.SetRotation(atkDir);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
         {
             // Left attack
             atkTimer = 10;
             atkDir = "left";
-            atkCooldown = 1000;
-            atkBox.SetRotation("left");
+            atkCooldown = baseAtkCooldown;
+            atkBox.SetRotation(atkDir);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
         {
             // Right attack
             atkTimer = 10;
             atkDir = "right";
-            atkCooldown = 1000;
-            atkBox.SetRotation("right");
+            atkCooldown = baseAtkCooldown;
+            atkBox.SetRotation(atkDir);
         }
     }
     else

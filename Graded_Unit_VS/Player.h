@@ -40,6 +40,7 @@ private:
     int atkCooldown;
     std::string atkDir;
     float atkDistance;
+    int baseAtkCooldown;
 
     int currentHealth;
     int maxHealth;

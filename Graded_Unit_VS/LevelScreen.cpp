@@ -21,7 +21,7 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	rectangle.setPosition(window->getSize().x / 2, window->getSize().y / 2 + 100.0f);
 	rectangle.setSize(sf::Vector2f(window->getSize().x - 400.0f, window->getSize().y - 300.0f));
 	rectangle.setOrigin(rectangle.getSize().x / 2, rectangle.getSize().y / 2);
-	rectangle.setFillColor(sf::Color::White);
+	rectangle.setFillColor(sf::Color(255, 255, 255, 100));
 
 	banner.setTexture(AssetManager::RequestTexture("TopUI"));
 	banner.scale(4.0f, 4.0f);
@@ -92,6 +92,10 @@ void LevelScreen::Update(sf::Time frameTime)
 					{
 						player.ResetDamageCooldown();
 						player.TakeDamage();
+						if (player.GetHealth() == 0)
+						{
+							GameOver();
+						}
 					}
 				}
 
@@ -134,10 +138,13 @@ void LevelScreen::Update(sf::Time frameTime)
 			Restart();
 	}
 
+	// TODO - Player Health
+	/*
 	if (player.GetHealth() == 0)
 	{
 		GameOver();
 	}
+	*/
 }
 
 void LevelScreen::Draw(sf::RenderTarget& target)
@@ -193,63 +200,59 @@ void LevelScreen::NewWave()
 	enemies.clear();
 	blocks.clear();
 
+	if (waveCount > 50)
+		GameOver();
 
-	if (waveCount <= 50)
+
+	// Choose random number of blocks
+	int blockCount = (rand() % 10) + 2;
+	if (waveCount > 20)
 	{
-		// Choose random number of blocks
-		int blockCount = (rand() % 10) + 2;
-		if (waveCount > 20)
-		{
-			blockCount += (rand() % 10);
-		}
+		blockCount += (rand() % 10);
+	}
 
-		// Keep obstacles out of the introductory waves
-		if (waveCount > 5)
+	// Keep obstacles out of the introductory waves
+	if (waveCount > 5)
+	{
+		if (blocks.size() < blockCount)
 		{
-			if (blocks.size() < blockCount)
+			for (int i = 0; i < blockCount; ++i)
 			{
-				for (int i = 0; i < blockCount; ++i)
-				{
-					blocks.push_back(new Block);
-				}
-				for (size_t i = 0; i < blocks.size(); ++i)
-				{
-					blocks[i]->Spawn();
-				}
+				blocks.push_back(new Block);
+			}
+			for (size_t i = 0; i < blocks.size(); ++i)
+			{
+				blocks[i]->Spawn();
 			}
 		}
+	}
 
-		// Hardcoded enemy counts
-		// If anything else, figure it out
-		if (waveCount == 1)
-		{
-			enemyCount = 1;
-		}
-		else if (waveCount == 2 || waveCount == 3 || waveCount == 4 || waveCount == 6)
-		{
-			enemyCount = 2;
-		}
-		else if (waveCount == 5 || waveCount == 7)
-		{
-			enemyCount = 3;
-		}
-		else if (waveCount == 8 || waveCount == 9)
-		{
-			enemyCount = 4;
-		}
-		else
-		{
-			// Get half the wave count in order to slowly increase difficulty from this point
-			// Rounding doesn't matter because it only makes a 1 enemy difference
-			enemyCount = waveCount / 2;
-		}
-		// Current enemy count to detect how many exist
-		currEnemies = enemyCount;
+	// Hardcoded enemy counts
+	// If anything else, figure it out
+	if (waveCount == 1)
+	{
+		enemyCount = 1;
+	}
+	else if (waveCount == 2 || waveCount == 3 || waveCount == 4 || waveCount == 6)
+	{
+		enemyCount = 2;
+	}
+	else if (waveCount == 5 || waveCount == 7)
+	{
+		enemyCount = 3;
+	}
+	else if (waveCount == 8 || waveCount == 9)
+	{
+		enemyCount = 4;
 	}
 	else
 	{
-		GameOver();
+		// Get half the wave count in order to slowly increase difficulty from this point
+		// Rounding doesn't matter because it only makes a 1 enemy difference
+		enemyCount = waveCount / 2;
 	}
+	// Current enemy count to detect how many exist
+	currEnemies = enemyCount;
 }
 
 void LevelScreen::GameOver()

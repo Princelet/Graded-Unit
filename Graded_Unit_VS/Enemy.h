@@ -35,6 +35,7 @@ private:
     sf::Clock spawnClock;
     int interval;
     int enemyType;
+    int baseAtkCooldown;
 
     int damageCooldown;
     int health;

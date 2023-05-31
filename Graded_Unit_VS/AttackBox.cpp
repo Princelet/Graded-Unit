@@ -48,3 +48,22 @@ void AttackBox::SetRotation(std::string dir)
         sprite.setScale(0.25f, 0.25f);
     }
 }
+
+void AttackBox::SetEnemy(int enemyType)
+{
+    if (enemyType == 0)
+    {
+        sprite.setColor(sf::Color(20, 255, 150, 255));
+        sprite.setScale(0.6f, 0.6f);
+    }
+    if (enemyType == 1)
+    {
+        sprite.setColor(sf::Color(255, 60, 60, 255));
+        sprite.setScale(0.8f, 0.8f);
+    }
+    if (enemyType == 2)
+    {
+        sprite.setColor(sf::Color(20, 150, 255, 255));
+        sprite.setScale(0.4f, 0.4f);
+    }
+}

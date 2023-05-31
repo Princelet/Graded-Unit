@@ -21,6 +21,7 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	, atkCooldown(1000)
 	, atkDistance(50)
 	, atkTimer(10)
+	, baseAtkCooldown(1500)
 {
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemyFront"));
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemySide"));
@@ -52,7 +53,6 @@ void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f pl
 
 	CheckEdges(window);
 
-	// TODO - Different enemy AIs
 	if (playerPos.x < GetPosition().x)
 	{
 		acceleration.x = -accel;
@@ -128,7 +128,7 @@ int Enemy::GetDamageCooldown()
 
 void Enemy::ResetDamageCooldown()
 {
-	damageCooldown = 1000;
+	damageCooldown = 500;
 }
 
 AttackBox Enemy::GetAttackBox()
@@ -192,6 +192,7 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(20, 255, 150, 255));
 		sprite.setScale(0.3f, 0.3f);
 		collisionOffset = sf::Vector2f(-37.0f, -51.0f);
+		baseAtkCooldown = 1000;
 		break;
 
 	case 1:
@@ -201,6 +202,7 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(255, 60, 60, 255));
 		sprite.setScale(0.4f, 0.4f);
 		collisionOffset = sf::Vector2f(-48.0f, -66.0f);
+		baseAtkCooldown = 1200;
 		break;
 
 	case 2:
@@ -210,8 +212,11 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(20, 150, 255, 255));
 		sprite.setScale(0.2f, 0.2f);
 		collisionOffset = sf::Vector2f(-24.0f, -34.0f);
+		baseAtkCooldown = 800;
 		break;
 	}
+	
+	atkBox.SetEnemy(enemyType);
 
 	collisionScale = sf::Vector2f(1.0f, 1.0f);
 
@@ -269,28 +274,32 @@ void Enemy::Attack(sf::Vector2f playerPos)
 		// Upward attack
 		atkTimer = 10;
 		atkDir = "up";
-		atkCooldown = 1000;
+		atkCooldown = baseAtkCooldown;
+		atkBox.SetRotation("up");
 	}
 	if (playerPos.y < GetPosition().y)
 	{
 		// Downward attack
 		atkTimer = 10;
 		atkDir = "down";
-		atkCooldown = 1000;
+		atkCooldown = baseAtkCooldown;
+		atkBox.SetRotation("down");
 	}
 	if (playerPos.x > GetPosition().x)
 	{
 		// Left attack
 		atkTimer = 10;
 		atkDir = "left";
-		atkCooldown = 1000;
+		atkCooldown = baseAtkCooldown;
+		atkBox.SetRotation("left");
 	}
 	if (playerPos.y > GetPosition().y)
 	{
 		// Right attack
 		atkTimer = 10;
 		atkDir = "right";
-		atkCooldown = 1000;
+		atkCooldown = baseAtkCooldown;
+		atkBox.SetRotation("right");
 	}
 
 	// Outside so it sticks while it's alive

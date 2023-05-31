@@ -56,5 +56,8 @@ Graded Unit Devlog
 - Added some high score code to the game.
 - Added a banner sprite for the UI at the top of the screen.
 - Re-enabled the end panel code.
-- Enemies still don't attack so I can't test the game over code.
-- Struggling to get the enemies to attack at all, even if it's just on an interval...
+- Got enemies to attack but their attacks just float there and never vanish.
+- Game over doesnt seem to do anything besides stop another wave from loading. The game generally keeps running?
+- Added a visual cue to player invulnerability.
+- Made enemy attack boxes different colours.
+- Enemies seem to still be spawning out of bounds and from there just... sit there and don't exist? Wave can increment with a guy up in the corner.

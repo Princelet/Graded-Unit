@@ -9,8 +9,8 @@ public:
     ~AttackBox();
 
     void SetRotation(std::string dir);
+    void SetEnemy(int enemyType);
     
 private:
     std::vector<sf::Texture> textures;
 };
-
