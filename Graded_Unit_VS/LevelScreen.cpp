@@ -131,6 +131,11 @@ void LevelScreen::Update(sf::Time frameTime)
 			++waveCount;
 			NewWave();
 		}
+
+		if (player.GetHealth() == 0)
+		{
+			GameOver();
+		}
 	}
 	else
 	{
@@ -257,7 +262,7 @@ void LevelScreen::GameOver()
 	gameRunning = false;
 
 	// Get High Scores
-	endPanel.SetBody(GetHighScores(waveCount));
+	endPanel.SetBody(GetHighScores(waveCount - 1));
 
 	if (waveCount > 50)
 	{

@@ -62,3 +62,7 @@ Graded Unit Devlog
 - Made enemy attack boxes different colours.
 - Enemies seem to still be spawning out of bounds and from there just... sit there and don't exist? Wave can increment with a guy up in the corner.
 - Adjusted enemy spawning to use the arena instead of the screen. Doesn't fix issue yet however...
+
+1/6
+- Created a block sprite.
+- Made it so the player internally becomes invisible when on no health. This will be replaced when I figure out why game over isn't working...

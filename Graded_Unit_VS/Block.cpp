@@ -4,7 +4,8 @@
 Block::Block()
 	: Object()
 {
-	sprite.setTexture(AssetManager::RequestTexture("GlassPanel"));
+	sprite.setTexture(AssetManager::RequestTexture("Block"));
+	sprite.setScale(3.0f, 3.0f);
 	collisionOffset = sf::Vector2f(0.0f, 0.0f);
 	collisionScale = sf::Vector2f(1.0f, 1.0f);
 	SetPosition(100.0f, 100.0f);

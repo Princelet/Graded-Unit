@@ -113,6 +113,11 @@ void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
     }
     else
         sprite.setColor(sf::Color(255, 255, 255, 255));
+
+    if (currentHealth == 0)
+    {
+        sprite.setColor(sf::Color(255, 255, 255, 0));
+    }
 }
 
 void Player::HandleCollision(Object& otherObj)
