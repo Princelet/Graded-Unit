@@ -10,6 +10,8 @@ public:
 
     void SetRotation(std::string dir);
     void SetEnemy(int enemyType);
+    void Hide();
+    void Show();
     
 private:
     std::vector<sf::Texture> textures;

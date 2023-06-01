@@ -7,7 +7,6 @@ class Block :
 {
 public:
     Block();
-    ~Block();
 
     void Spawn();
 };

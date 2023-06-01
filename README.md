@@ -65,4 +65,7 @@ Graded Unit Devlog
 
 1/6
 - Created a block sprite.
-- Made it so the player internally becomes invisible when on no health. This will be replaced when I figure out why game over isn't working...
+- Made it so the player internally becomes invisible when on no health. This will be replaced when I figure out why game over isn't working.
+- Fixed the old position value. The one on Object was private instead of protected, which means it wasn't overwriting and was always at 0, 0.
+- Added a health item class and made it appear every 5 waves. It currently does nothing and never disappears.
+- Tried to fix the enemies that spawn at the bottom and don't move, and now I have them stuck outside the arena.

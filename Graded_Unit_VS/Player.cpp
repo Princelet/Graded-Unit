@@ -9,7 +9,6 @@ enum class PhysicsType
 
 Player::Player()
     : Object()
-    , oldPosition(100.0f, 300.0f)
     , velocity()
     , acceleration(100.0f, 100.0f)
     , currentHealth(20)
@@ -43,6 +42,8 @@ Player::Player()
 
     collisionOffset = sf::Vector2f(-27.0f, -48.0f);
     collisionScale = sf::Vector2f(1.1f, 1.0f);
+
+    oldPosition = sf::Vector2f(100.0f, 300.0f);
 }
 
 void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
@@ -128,14 +129,14 @@ void Player::HandleCollision(Object& otherObj)
     if (abs(depth.x) < abs(depth.y))
     {
         // Move in x direction
-        newPos.x += depth.x;
+        newPos.x += depth.x * 1.1f;
         velocity.x = 0;
         acceleration.x = 0;
     }
     else
     {
         // Move in y direction
-        newPos.y += depth.y;
+        newPos.y += depth.y * 1.1f;
         velocity.y = 0;
         acceleration.y = 0;
     }
@@ -197,6 +198,7 @@ void Player::Attack()
             atkDir = "up";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
+            atkBox.Show();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
         {
@@ -205,6 +207,7 @@ void Player::Attack()
             atkDir = "down";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
+            atkBox.Show();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
         {
@@ -213,6 +216,7 @@ void Player::Attack()
             atkDir = "left";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
+            atkBox.Show();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
         {
@@ -221,6 +225,7 @@ void Player::Attack()
             atkDir = "right";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
+            atkBox.Show();
         }
     }
     else
@@ -254,6 +259,7 @@ void Player::Attack()
     {
         atkDir = "none";
         atkBox.SetPosition(sf::Vector2f(-100.0f, -100.0f));
+        atkBox.Hide();
     }
 }
 

@@ -6,7 +6,6 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	: Object()
 	, window(newWindow)
 	, level(newLevel)
-	, oldPosition(1000.0f, 1000.0f)
 	, velocity()
 	, acceleration(100.0f, 100.0f)
 	, enemyType(0)
@@ -16,7 +15,7 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	, attack(2)
 	, health(1)
 	, speed(2)
-	, damageCooldown(0)
+	, damageCooldown(10)
 	, atkBox(sf::Vector2f(0, 0))
 	, atkCooldown(1000)
 	, atkDistance(50)
@@ -30,6 +29,8 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	// TODO - Edit EnemySide to have same width as front and back to avoid stretching
 	sprite.setOrigin(enemyTextures[0].getSize().x / 2, enemyTextures[0].getSize().y / 2);
 	sprite.setTexture(enemyTextures[0]);
+
+	oldPosition = sf::Vector2f((rand() % 1000), newLevel->GetArena().getSize().y - 200.0f);
 }
 
 void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f playerPos)
@@ -249,13 +250,13 @@ void Enemy::Spawn()
 	case 2:
 		// top
 		x = (rand() % maxX) + minX;
-		y = minY + 100;
+		y = minY + 200;
 		break;
 
 	case 3:
 		// bottom
 		x = (rand() % maxX) + minX;
-		y = maxY - 100;
+		y = maxY - 200;
 		break;
 	}
 
@@ -276,6 +277,7 @@ void Enemy::Attack(sf::Vector2f playerPos)
 		atkDir = "up";
 		atkCooldown = baseAtkCooldown;
 		atkBox.SetRotation("up");
+		atkBox.Show();
 	}
 	if (playerPos.y < GetPosition().y)
 	{
@@ -284,6 +286,7 @@ void Enemy::Attack(sf::Vector2f playerPos)
 		atkDir = "down";
 		atkCooldown = baseAtkCooldown;
 		atkBox.SetRotation("down");
+		atkBox.Show();
 	}
 	if (playerPos.x > GetPosition().x)
 	{
@@ -292,6 +295,7 @@ void Enemy::Attack(sf::Vector2f playerPos)
 		atkDir = "left";
 		atkCooldown = baseAtkCooldown;
 		atkBox.SetRotation("left");
+		atkBox.Show();
 	}
 	if (playerPos.y > GetPosition().y)
 	{
@@ -300,6 +304,7 @@ void Enemy::Attack(sf::Vector2f playerPos)
 		atkDir = "right";
 		atkCooldown = baseAtkCooldown;
 		atkBox.SetRotation("right");
+		atkBox.Show();
 	}
 
 	// Outside so it sticks while it's alive
@@ -328,5 +333,6 @@ void Enemy::Attack(sf::Vector2f playerPos)
 	{
 		atkDir = "none";
 		atkBox.SetPosition(sf::Vector2f(0.0f, -0.0f));
+		atkBox.Hide();
 	}
 }

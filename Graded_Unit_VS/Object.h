@@ -39,10 +39,10 @@ protected:
 	CollisionType collisionType;
 
 	bool alive;
+	sf::Vector2f oldPosition;
 
 private:
 	sf::Vector2f position;
-	sf::Vector2f oldPosition;
 	sf::Vector2f GetCollisionCentre();
 	float GetCircleColliderRadius();
 	sf::FloatRect GetAABB();

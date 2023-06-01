@@ -5,12 +5,13 @@
 #include "Enemy.h"
 #include "Block.h"
 #include "AttackBox.h"
+#include "HealthItem.h"
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, gameRunning(true)
-	, waveCount(7)
+	, waveCount(9)
 	, enemyCount(1)
 	, enemyNo(0)
 	, spawnTimer(1000)
@@ -64,6 +65,34 @@ void LevelScreen::Update(sf::Time frameTime)
 				}
 			}
 		}
+
+		for (size_t i = 0; i < heals.size(); ++i)
+		{
+			if (heals[i])
+			{
+				for (size_t j = 0; j < blocks.size(); ++j)
+				{
+					if (blocks[j]->CheckCollision((*heals[i])))
+					{
+						(*heals[i]).SetColliding(true);
+						blocks[j]->SetColliding(true);
+						(*heals[i]).HandleCollision(*blocks[j]);
+					}
+				}
+
+				if (heals[i]->CheckCollision(player))
+				{
+					player.SetColliding(true);
+					heals[i]->SetColliding(true);
+					player.GetHealth();
+
+					delete heals[i];
+					heals[i] = nullptr;
+				}
+			}
+		}
+
+
 
 		for (size_t i = 0; i < enemies.size(); ++i)
 		{
@@ -157,9 +186,15 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 			enemies[i]->GetAttackBox().Draw(target);
 		}
 	}
+
 	for (size_t i = 0; i < blocks.size(); ++i)
 	{
 		blocks[i]->Draw(target);
+	}
+
+	for (size_t i = 0; i < heals.size(); ++i)
+	{
+		heals[i]->Draw(target);
 	}
 
 	player.Draw(target);
@@ -197,20 +232,32 @@ void LevelScreen::NewWave()
 		delete blocks[i];
 		blocks[i] = nullptr;
 	}
+	for (size_t i = 0; i < heals.size(); ++i)
+	{
+		delete heals[i];
+		heals[i] = nullptr;
+	}
 	enemyNo = 0;
 
 	enemies.clear();
 	blocks.clear();
+	heals.clear();
 
 	if (waveCount > 50)
 		GameOver();
 
 
 	// Choose random number of blocks
-	int blockCount = (rand() % 10) + 2;
+	int blockCount = (rand() % 15) + 2;
 	if (waveCount > 20)
 	{
 		blockCount += (rand() % 10);
+	}
+
+	if (waveCount % 5 == 0)
+	{
+		heals.push_back(new HealthItem);
+		heals[heals.size() - 1]->Spawn();
 	}
 
 	// Keep obstacles out of the introductory waves

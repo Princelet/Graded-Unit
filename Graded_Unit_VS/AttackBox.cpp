@@ -11,6 +11,7 @@ AttackBox::AttackBox(sf::Vector2f newPosition)
     sprite.setScale(0.25f, 0.25f);
     sprite.setRotation(180.0f);
     SetPosition(newPosition);
+    Hide();
 }
 
 AttackBox::~AttackBox()
@@ -66,4 +67,14 @@ void AttackBox::SetEnemy(int enemyType)
         sprite.setColor(sf::Color(20, 150, 255, 255));
         sprite.setScale(0.4f, 0.4f);
     }
+}
+
+void AttackBox::Hide()
+{
+    sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 0));
+}
+
+void AttackBox::Show()
+{
+    sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 255));
 }

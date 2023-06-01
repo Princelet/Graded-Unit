@@ -9,6 +9,7 @@ class Game;
 class Enemy;
 class Block;
 class EndPanel;
+class HealthItem;
 
 class LevelScreen :
 	public Screen
@@ -35,6 +36,7 @@ private:
 
 	std::vector<Enemy*> enemies;
 	std::vector<Block*> blocks;
+	std::vector<HealthItem*> heals;
 
 	int blockCount;
 	int enemyCount;
