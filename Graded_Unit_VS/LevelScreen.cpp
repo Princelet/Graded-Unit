@@ -14,11 +14,26 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, waveCount(9)
 	, enemyCount(1)
 	, enemyNo(0)
-	, spawnTimer(1000)
 	, window(newGamePointer->GetWindow())
 	, currEnemies(1)
 	, endPanel(newGamePointer->GetWindow(), "Game Over", "Unedited Message!")
+	, waveText()
+	, timerText()
+	, healthText()
+	, enemyText()
+	, enemyInterval(sf::seconds(3))
+	, waveDuration(sf::seconds(120))
 {
+	AssetManager::SetupText(waveText, "GameFont", "Cyan", "Wave X");
+	AssetManager::SetupText(timerText, "GameFont", "Cyan", "Time: ");
+	AssetManager::SetupText(healthText, "GameFont", "Cyan", "HP: ");
+	AssetManager::SetupText(enemyText, "GameFont", "Cyan", "Enemies: ");
+
+	waveText.setPosition(window->getSize().x / 2, 60.0f);
+	timerText.setPosition(window->getSize().x - 100.0f, 60.0f);
+	healthText.setPosition(50.0f, 160.0f);
+	enemyText.setPosition(50.0f, 60.0f);
+
 	rectangle.setPosition(window->getSize().x / 2, window->getSize().y / 2 + 100.0f);
 	rectangle.setSize(sf::Vector2f(window->getSize().x - 400.0f, window->getSize().y - 300.0f));
 	rectangle.setOrigin(rectangle.getSize().x / 2, rectangle.getSize().y / 2);
@@ -36,7 +51,24 @@ void LevelScreen::Update(sf::Time frameTime)
 {
 	if (gameRunning)
 	{
+		float waveTimeFloat = waveTimer.getElapsedTime().asSeconds();
+		float remainingTimeFloat = waveDuration.asSeconds() - waveTimeFloat;
+		timerText.setString("Time: " + std::to_string((int)ceil(remainingTimeFloat)));
+
+		if (remainingTimeFloat == 0)
+		{
+			GameOver();
+		}
+
+		float enemyTimeFloat = enemySpawnClock.getElapsedTime().asSeconds();
+		float enemyIntervalFloat = enemyInterval.asSeconds() - enemyTimeFloat;
+
+		waveText.setString("Wave " + waveCount);
+		healthText.setString("HP: " + player.GetHealth());
+		enemyText.setString("Enemies: " + enemies.size());
+
 		player.Update(frameTime, window);
+		player.Animate(animationClock);
 		player.GetAttackBox().Update(frameTime, window);
 		player.SetColliding(false);
 
@@ -140,22 +172,20 @@ void LevelScreen::Update(sf::Time frameTime)
 		if (enemyCount > 0)
 		{
 			// Check if timer is 
-			if (spawnTimer > 0)
+			if (enemyIntervalFloat <= 0)
 			{
 				// Spawn the new enemy into the array
 				enemies.push_back(new Enemy(window, this));
 				enemies[enemyNo]->Spawn();
 
 				enemyNo++;
+				enemySpawnClock.restart();
+				--enemyCount;
+				enemyInterval = sf::seconds((rand() % 3) + 2);
 			}
-			else
-			{
-				spawnTimer = (rand() % 1000) + 200;
-			}
-			--enemyCount;
 		}
 
-		if (currEnemies == 0)
+		if (enemyCount == 0)
 		{
 			++waveCount;
 			NewWave();
@@ -177,6 +207,11 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 {
 	target.draw(banner);
 	target.draw(rectangle);
+
+	target.draw(waveText);
+	target.draw(timerText);
+	target.draw(healthText);
+	target.draw(enemyText);
 
 	for (size_t i = 0; i < enemies.size(); ++i)
 	{

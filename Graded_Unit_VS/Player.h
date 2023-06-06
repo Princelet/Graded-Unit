@@ -21,9 +21,9 @@ public:
 
     void Attack();
     void TakeDamage();
+    void Animate(sf::Clock clock);
 
 private:
-    void Animate();
     void UpdateAcceleration();
     
     sf::Vector2f velocity;
@@ -49,4 +49,6 @@ private:
 
     int powerCounter;
     bool hasShield;
+
+    sf::Time timePerFrame;
 };

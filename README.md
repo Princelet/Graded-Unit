@@ -69,3 +69,9 @@ Graded Unit Devlog
 - Fixed the old position value. The one on Object was private instead of protected, which means it wasn't overwriting and was always at 0, 0.
 - Added a health item class and made it appear every 5 waves. It currently does nothing and never disappears.
 - Tried to fix the enemies that spawn at the bottom and don't move, and now I have them stuck outside the arena.
+
+6/6
+- Attempted to change how animations work using clocks.
+- Added clocks for game time and enemy spawning.
+- Game SHOULD have timers now. However none of the text is displaying and I don't know why.
+- Player animation clock seems to not restart when asked. Neither does the enemy one. According to breakpoints I'm hitting both but nothing seems to happen...

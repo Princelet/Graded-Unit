@@ -44,11 +44,23 @@ private:
 
 	int currEnemies;
 	int enemyNo;
-	int spawnTimer;
 
 	bool gameRunning;
 
 	sf::RenderWindow* window;
 	sf::RectangleShape rectangle;
 	sf::Sprite banner;
+
+	sf::Text waveText;
+	sf::Text timerText;
+	sf::Text healthText;
+	sf::Text enemyText;
+
+
+	sf::Clock waveTimer;
+	sf::Clock enemySpawnClock;
+	sf::Clock animationClock;
+
+	sf::Time enemyInterval;
+	sf::Time waveDuration;
 };

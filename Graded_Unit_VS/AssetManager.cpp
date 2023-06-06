@@ -69,6 +69,10 @@ void AssetManager::SetupText(sf::Text& text, std::string font, std::string color
     {
         textColor = sf::Color::Red;
     }
+    else
+    {
+        textColor = sf::Color::White;
+    }
     RequestFont(font);
     text.setFillColor(textColor);
     text.setOutlineColor(sf::Color::Black);

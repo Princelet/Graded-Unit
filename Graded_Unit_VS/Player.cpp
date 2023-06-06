@@ -22,6 +22,7 @@ Player::Player()
     , atkCooldown(0)
     , damageCooldown(0)
     , baseAtkCooldown(600)
+    , timePerFrame(sf::seconds(1.0f))
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -96,7 +97,6 @@ void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
     oldPosition = lastFramePos;
 
     CheckEdges(window);
-    Animate();
     Attack();
 
     // Power item countdown
@@ -268,75 +268,81 @@ void Player::TakeDamage()
     --currentHealth;
 }
 
-void Player::Animate()
+void Player::Animate(sf::Clock clock)
 {
     std::string lastPressed;
 
-    // For each direction, set scale and texture
-    // If continuously going same direction, alternate the sprite used
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    sf::Time timePassedThisFrame = clock.getElapsedTime();
+    if (timePassedThisFrame >= timePerFrame)
     {
-        sprite.setScale(0.25f, 0.25f);
-        if (sprite.getTexture() == &playerWalkDown[0])
-            sprite.setTexture(playerWalkDown[1]);
-        else
-            sprite.setTexture(playerWalkDown[0]);
-        lastPressed = "Down";
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
-        sprite.setScale(0.25f, 0.25f);
-        if (sprite.getTexture() == &playerWalkUp[0])
-            sprite.setTexture(playerWalkUp[1]);
-        else
-            sprite.setTexture(playerWalkUp[0]);
-        lastPressed = "Up";
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    {
-        sprite.setScale(0.25f, 0.25f);
-        if (sprite.getTexture() == &playerWalkSide[0])
-            sprite.setTexture(playerWalkSide[1]);
-        else if (sprite.getTexture() == &playerWalkSide[1])
-            sprite.setTexture(playerStill[2]);
-        else
-            sprite.setTexture(playerWalkSide[0]);
-        lastPressed = "Left";
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    {
-        sprite.setScale(-0.25f, 0.25f);
-        if (sprite.getTexture() == &playerWalkSide[0])
-            sprite.setTexture(playerWalkSide[1]);
-        else if (sprite.getTexture() == &playerWalkSide[1])
-            sprite.setTexture(playerStill[2]);
-        else
-            sprite.setTexture(playerWalkSide[0]);
-        lastPressed = "Right";
-    }
-    else
-    {
-        // Set Still Sprite and Scale based on last pressed key
-        // 0 = Down, 1 = Up, 2 = Side
-        if (lastPressed == "Up")
+        clock.restart();
+
+        // For each direction, set scale and texture
+        // If continuously going same direction, alternate the sprite used
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         {
             sprite.setScale(0.25f, 0.25f);
-            sprite.setTexture(playerStill[0]);
+            if (sprite.getTexture() == &playerWalkDown[0])
+                sprite.setTexture(playerWalkDown[1]);
+            else
+                sprite.setTexture(playerWalkDown[0]);
+            lastPressed = "Down";
         }
-        else if (lastPressed == "Down")
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
         {
             sprite.setScale(0.25f, 0.25f);
-            sprite.setTexture(playerStill[1]);
+            if (sprite.getTexture() == &playerWalkUp[0])
+                sprite.setTexture(playerWalkUp[1]);
+            else
+                sprite.setTexture(playerWalkUp[0]);
+            lastPressed = "Up";
         }
-        else if (lastPressed == "Left")
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {
             sprite.setScale(0.25f, 0.25f);
-            sprite.setTexture(playerStill[2]);
+            if (sprite.getTexture() == &playerWalkSide[0])
+                sprite.setTexture(playerWalkSide[1]);
+            else if (sprite.getTexture() == &playerWalkSide[1])
+                sprite.setTexture(playerStill[2]);
+            else
+                sprite.setTexture(playerWalkSide[0]);
+            lastPressed = "Left";
         }
-        else if (lastPressed == "Right")
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         {
             sprite.setScale(-0.25f, 0.25f);
-            sprite.setTexture(playerStill[2]);
+            if (sprite.getTexture() == &playerWalkSide[0])
+                sprite.setTexture(playerWalkSide[1]);
+            else if (sprite.getTexture() == &playerWalkSide[1])
+                sprite.setTexture(playerStill[2]);
+            else
+                sprite.setTexture(playerWalkSide[0]);
+            lastPressed = "Right";
+        }
+        else
+        {
+            // Set Still Sprite and Scale based on last pressed key
+            // 0 = Down, 1 = Up, 2 = Side
+            if (lastPressed == "Up")
+            {
+                sprite.setScale(0.25f, 0.25f);
+                sprite.setTexture(playerStill[0]);
+            }
+            else if (lastPressed == "Down")
+            {
+                sprite.setScale(0.25f, 0.25f);
+                sprite.setTexture(playerStill[1]);
+            }
+            else if (lastPressed == "Left")
+            {
+                sprite.setScale(0.25f, 0.25f);
+                sprite.setTexture(playerStill[2]);
+            }
+            else if (lastPressed == "Right")
+            {
+                sprite.setScale(-0.25f, 0.25f);
+                sprite.setTexture(playerStill[2]);
+            }
         }
     }
 }
