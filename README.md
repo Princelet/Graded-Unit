@@ -75,3 +75,12 @@ Graded Unit Devlog
 - Added clocks for game time and enemy spawning.
 - Game SHOULD have timers now. However none of the text is displaying and I don't know why.
 - Player animation clock seems to not restart when asked. Neither does the enemy one. According to breakpoints I'm hitting both but nothing seems to happen...
+
+7/6
+- Got the UI to appear and update correctly.
+- Was a little confused when I forgot to "as string" the enemy size and it started removing letters!
+- Player and enemies now can take varying damage.
+- Added function to health item.
+- Added power item and made it show on player when they have it.
+- End panel can now appear and game over has a function.
+- High scores currently don't update or display the word wave and have a weird character between the latter scores.

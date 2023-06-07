@@ -9,4 +9,5 @@ public:
 
     void HandleCollision(Object& otherObj) override;
     void Spawn();
+    void Die();
 };

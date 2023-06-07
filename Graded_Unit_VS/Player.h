@@ -17,11 +17,14 @@ public:
     void ResetDamageCooldown();
 
     int GetHealth();
+    int GetAttack();
+    bool GetHasPower();
+    sf::Sprite GetPlayerPower();
     void PickUp(std::string itemName);
 
     void Attack();
-    void TakeDamage();
-    void Animate(sf::Clock clock);
+    void TakeDamage(int damage);
+    void Animate();
 
 private:
     void UpdateAcceleration();
@@ -44,11 +47,11 @@ private:
     int currentHealth;
     int maxHealth;
     int attack;
-
     int damageCooldown;
 
-    int powerCounter;
-    bool hasShield;
-
-    sf::Time timePerFrame;
+    bool hasPower;
+    sf::Sprite power;
+    std::vector<sf::Texture> powerAni;
+    sf::Clock powerClock;
+    sf::Time powerEnd;
 };

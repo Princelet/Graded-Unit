@@ -58,23 +58,10 @@ sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string assetName)
     }
 }
 
-void AssetManager::SetupText(sf::Text& text, std::string font, std::string color, std::string string)
+void AssetManager::SetupText(sf::Text& text, std::string font, sf::Color color, std::string string)
 {
-    sf::Color textColor;
-    if (color == "Cyan")
-    {
-        textColor = sf::Color::Cyan;
-    }
-    if (color == "Red")
-    {
-        textColor = sf::Color::Red;
-    }
-    else
-    {
-        textColor = sf::Color::White;
-    }
-    RequestFont(font);
-    text.setFillColor(textColor);
+    text.setFont(RequestFont(font));
+    text.setFillColor(color);
     text.setOutlineColor(sf::Color::Black);
     text.setOutlineThickness(1.0f);
     text.setString(string);

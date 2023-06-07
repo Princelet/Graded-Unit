@@ -4,12 +4,13 @@
 #include "Player.h"
 #include "AssetManager.h"
 #include "EndPanel.h"
+#include "HealthItem.h"
+#include "PowerItem.h"
 
 class Game;
 class Enemy;
 class Block;
 class EndPanel;
-class HealthItem;
 
 class LevelScreen :
 	public Screen
@@ -36,7 +37,8 @@ private:
 
 	std::vector<Enemy*> enemies;
 	std::vector<Block*> blocks;
-	std::vector<HealthItem*> heals;
+	HealthItem heals;
+	PowerItem power;
 
 	int blockCount;
 	int enemyCount;
@@ -63,4 +65,5 @@ private:
 
 	sf::Time enemyInterval;
 	sf::Time waveDuration;
+	sf::Time timePerFrame;
 };

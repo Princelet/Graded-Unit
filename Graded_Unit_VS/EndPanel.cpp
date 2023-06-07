@@ -16,14 +16,14 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow, std::string titleText, std::stri
 	title.setFont(AssetManager::RequestFont("GameFont"));
 	message.setFont(AssetManager::RequestFont("GameFont"));
 
-	background.setScale(4, 3);
+	background.setScale(5.0f, 4.0f);
 
-	title.setCharacterSize(70);
+	title.setCharacterSize(40);
 	title.setString(titleText);
 	title.setOutlineColor(sf::Color::Black);
-	title.setOutlineThickness(10);
+	title.setOutlineThickness(1);
 
-	message.setCharacterSize(30);
+	message.setCharacterSize(20);
 	message.setString(messageText);
 	message.setLineSpacing(1.5);
 

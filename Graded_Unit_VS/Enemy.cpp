@@ -30,7 +30,7 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	sprite.setOrigin(enemyTextures[0].getSize().x / 2, enemyTextures[0].getSize().y / 2);
 	sprite.setTexture(enemyTextures[0]);
 
-	oldPosition = sf::Vector2f((rand() % 1000), newLevel->GetArena().getSize().y - 200.0f);
+	oldPosition = sf::Vector2f(newLevel->GetArena().getSize().x - (rand() % 1000), newLevel->GetArena().getSize().y - 200.0f);
 }
 
 void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f playerPos)
@@ -122,6 +122,11 @@ int Enemy::GetHealth()
 	return health;
 }
 
+int Enemy::GetAttack()
+{
+	return attack;
+}
+
 int Enemy::GetDamageCooldown()
 {
 	return damageCooldown;
@@ -191,9 +196,9 @@ void Enemy::Spawn()
 		health = 2;
 		attack = 2;
 		sprite.setColor(sf::Color(20, 255, 150, 255));
-		sprite.setScale(0.3f, 0.3f);
-		collisionOffset = sf::Vector2f(-37.0f, -51.0f);
-		baseAtkCooldown = 1000;
+		sprite.setScale(0.26f, 0.26f);
+		collisionOffset = sf::Vector2f(-32.0f, -45.0f);
+		baseAtkCooldown = 650;
 		break;
 
 	case 1:
@@ -201,9 +206,9 @@ void Enemy::Spawn()
 		health = 3;
 		attack = 3;
 		sprite.setColor(sf::Color(255, 60, 60, 255));
-		sprite.setScale(0.4f, 0.4f);
-		collisionOffset = sf::Vector2f(-48.0f, -66.0f);
-		baseAtkCooldown = 1200;
+		sprite.setScale(0.32f, 0.32f);
+		collisionOffset = sf::Vector2f(-38.0f, -56.0f);
+		baseAtkCooldown = 800;
 		break;
 
 	case 2:
@@ -213,7 +218,7 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(20, 150, 255, 255));
 		sprite.setScale(0.2f, 0.2f);
 		collisionOffset = sf::Vector2f(-24.0f, -34.0f);
-		baseAtkCooldown = 800;
+		baseAtkCooldown = 500;
 		break;
 	}
 	
@@ -237,35 +242,35 @@ void Enemy::Spawn()
 	{
 	case 0:
 		// left
-		x = minX - 100;
+		x = minX - 180;
 		y = (rand() % maxY) + minY;
 		break;
 
 	case 1:
 		// right
-		x = maxX + 100;
+		x = maxX + 180;
 		y = (rand() % maxY) + minY;
 		break;
 
 	case 2:
 		// top
 		x = (rand() % maxX) + minX;
-		y = minY + 200;
+		y = minY + 180;
 		break;
 
 	case 3:
 		// bottom
 		x = (rand() % maxX) + minX;
-		y = maxY - 200;
+		y = maxY - 180;
 		break;
 	}
 
 	SetPosition(x, y);
 }
 
-void Enemy::TakeDamage()
+void Enemy::TakeDamage(int damage)
 {
-	--health;
+	health -= damage;
 }
 
 void Enemy::Attack(sf::Vector2f playerPos)

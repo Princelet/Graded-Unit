@@ -16,13 +16,14 @@ public:
 
     int GetEnemyType();
     int GetHealth();
+    int GetAttack();
     int GetDamageCooldown();
     void ResetDamageCooldown();
 
     AttackBox GetAttackBox();
 
     void Spawn();
-    void TakeDamage();
+    void TakeDamage(int damage);
     void Attack(sf::Vector2f playerPos);
 
 private:

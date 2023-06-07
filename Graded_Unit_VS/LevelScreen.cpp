@@ -5,13 +5,12 @@
 #include "Enemy.h"
 #include "Block.h"
 #include "AttackBox.h"
-#include "HealthItem.h"
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, gameRunning(true)
-	, waveCount(9)
+	, waveCount(12)
 	, enemyCount(1)
 	, enemyNo(0)
 	, window(newGamePointer->GetWindow())
@@ -22,17 +21,18 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, healthText()
 	, enemyText()
 	, enemyInterval(sf::seconds(3))
-	, waveDuration(sf::seconds(120))
+	, waveDuration(sf::seconds(50))
+	, timePerFrame(sf::seconds(0.25f))
 {
-	AssetManager::SetupText(waveText, "GameFont", "Cyan", "Wave X");
-	AssetManager::SetupText(timerText, "GameFont", "Cyan", "Time: ");
-	AssetManager::SetupText(healthText, "GameFont", "Cyan", "HP: ");
-	AssetManager::SetupText(enemyText, "GameFont", "Cyan", "Enemies: ");
+	AssetManager::SetupText(waveText, "GameFont", sf::Color::Cyan, "Wave X");
+	AssetManager::SetupText(timerText, "GameFont", sf::Color::Cyan, "Time: ");
+	AssetManager::SetupText(healthText, "GameFont", sf::Color::Cyan, "HP: ");
+	AssetManager::SetupText(enemyText, "GameFont", sf::Color::Cyan, "Enemies: ");
 
-	waveText.setPosition(window->getSize().x / 2, 60.0f);
-	timerText.setPosition(window->getSize().x - 100.0f, 60.0f);
-	healthText.setPosition(50.0f, 160.0f);
-	enemyText.setPosition(50.0f, 60.0f);
+	waveText.setPosition((window->getSize().x / 2.0f) - (waveText.getLocalBounds().width / 2.0f) - 20.0f, 75.0f);
+	timerText.setPosition(window->getSize().x - 300.0f, 60.0f);
+	healthText.setPosition(20.0f, 160.0f);
+	enemyText.setPosition(20.0f, 60.0f);
 
 	rectangle.setPosition(window->getSize().x / 2, window->getSize().y / 2 + 100.0f);
 	rectangle.setSize(sf::Vector2f(window->getSize().x - 400.0f, window->getSize().y - 300.0f));
@@ -63,14 +63,22 @@ void LevelScreen::Update(sf::Time frameTime)
 		float enemyTimeFloat = enemySpawnClock.getElapsedTime().asSeconds();
 		float enemyIntervalFloat = enemyInterval.asSeconds() - enemyTimeFloat;
 
-		waveText.setString("Wave " + waveCount);
-		healthText.setString("HP: " + player.GetHealth());
-		enemyText.setString("Enemies: " + enemies.size());
+		waveText.setString("Wave " + std::to_string(waveCount));
+		healthText.setString("HP: " + std::to_string(player.GetHealth()));
+		enemyText.setString("Enemies: " + std::to_string(currEnemies));
 
 		player.Update(frameTime, window);
-		player.Animate(animationClock);
 		player.GetAttackBox().Update(frameTime, window);
 		player.SetColliding(false);
+
+
+		sf::Time timePassedThisFrame = animationClock.getElapsedTime();
+		if (timePassedThisFrame >= timePerFrame)
+		{
+			animationClock.restart();
+			player.Animate();
+			power.Animate();
+		}
 
 		for (size_t i = 0; i < blocks.size(); ++i)
 		{
@@ -96,35 +104,33 @@ void LevelScreen::Update(sf::Time frameTime)
 					}
 				}
 			}
-		}
 
-		for (size_t i = 0; i < heals.size(); ++i)
-		{
-			if (heals[i])
+			if (blocks[i]->CheckCollision(heals))
 			{
-				for (size_t j = 0; j < blocks.size(); ++j)
-				{
-					if (blocks[j]->CheckCollision((*heals[i])))
-					{
-						(*heals[i]).SetColliding(true);
-						blocks[j]->SetColliding(true);
-						(*heals[i]).HandleCollision(*blocks[j]);
-					}
-				}
-
-				if (heals[i]->CheckCollision(player))
-				{
-					player.SetColliding(true);
-					heals[i]->SetColliding(true);
-					player.GetHealth();
-
-					delete heals[i];
-					heals[i] = nullptr;
-				}
+				heals.SetColliding(true);
+				blocks[i]->SetColliding(true);
+				heals.HandleCollision(*blocks[i]);
 			}
+
 		}
 
+		if (heals.CheckCollision(player))
+		{
+			player.SetColliding(true);
+			heals.SetColliding(true);
+			player.PickUp("health");
+			
+			heals.Die();
+		}
 
+		if (power.CheckCollision(player))
+		{
+			player.SetColliding(true);
+			power.SetColliding(true);
+			player.PickUp("power");
+
+			power.Die();
+		}
 
 		for (size_t i = 0; i < enemies.size(); ++i)
 		{
@@ -141,7 +147,7 @@ void LevelScreen::Update(sf::Time frameTime)
 					if (enemies[i]->GetDamageCooldown() == 0)
 					{
 						enemies[i]->ResetDamageCooldown();
-						enemies[i]->TakeDamage();
+						enemies[i]->TakeDamage(player.GetAttack());
 					}
 				}
 
@@ -152,15 +158,15 @@ void LevelScreen::Update(sf::Time frameTime)
 					if (player.GetDamageCooldown() == 0)
 					{
 						player.ResetDamageCooldown();
-						player.TakeDamage();
-						if (player.GetHealth() == 0)
+						player.TakeDamage(enemies[i]->GetAttack());
+						if (player.GetHealth() <= 0)
 						{
 							GameOver();
 						}
 					}
 				}
 
-				if (enemies[i]->GetHealth() == 0 && enemies[i] != nullptr)
+				if (enemies[i]->GetHealth() <= 0 && enemies[i] != nullptr)
 				{
 					delete enemies[i];
 					enemies[i] = nullptr;
@@ -185,7 +191,7 @@ void LevelScreen::Update(sf::Time frameTime)
 			}
 		}
 
-		if (enemyCount == 0)
+		if (currEnemies == 0)
 		{
 			++waveCount;
 			NewWave();
@@ -206,34 +212,41 @@ void LevelScreen::Update(sf::Time frameTime)
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
 	target.draw(banner);
-	target.draw(rectangle);
+
+	if (gameRunning)
+	{
+		target.draw(rectangle);
+
+		for (size_t i = 0; i < enemies.size(); ++i)
+		{
+			if (enemies[i])
+			{
+				enemies[i]->Draw(target);
+				enemies[i]->GetAttackBox().Draw(target);
+			}
+		}
+
+		for (size_t i = 0; i < blocks.size(); ++i)
+		{
+			blocks[i]->Draw(target);
+		}
+
+		heals.Draw(target);
+		power.Draw(target);
+
+		player.Draw(target);
+		player.GetAttackBox().Draw(target);
+		target.draw(player.GetPlayerPower());
+	}
+	else
+	{
+		endPanel.Draw(target);
+	}
 
 	target.draw(waveText);
 	target.draw(timerText);
 	target.draw(healthText);
 	target.draw(enemyText);
-
-	for (size_t i = 0; i < enemies.size(); ++i)
-	{
-		if (enemies[i])
-		{
-			enemies[i]->Draw(target);
-			enemies[i]->GetAttackBox().Draw(target);
-		}
-	}
-
-	for (size_t i = 0; i < blocks.size(); ++i)
-	{
-		blocks[i]->Draw(target);
-	}
-
-	for (size_t i = 0; i < heals.size(); ++i)
-	{
-		heals[i]->Draw(target);
-	}
-
-	player.Draw(target);
-	player.GetAttackBox().Draw(target);
 }
 
 sf::RectangleShape LevelScreen::GetArena()
@@ -267,16 +280,10 @@ void LevelScreen::NewWave()
 		delete blocks[i];
 		blocks[i] = nullptr;
 	}
-	for (size_t i = 0; i < heals.size(); ++i)
-	{
-		delete heals[i];
-		heals[i] = nullptr;
-	}
 	enemyNo = 0;
 
 	enemies.clear();
 	blocks.clear();
-	heals.clear();
 
 	if (waveCount > 50)
 		GameOver();
@@ -286,13 +293,21 @@ void LevelScreen::NewWave()
 	int blockCount = (rand() % 15) + 2;
 	if (waveCount > 20)
 	{
-		blockCount += (rand() % 10);
+		blockCount += (rand() % 3);
+	}
+	if (waveCount > 40)
+	{
+		blockCount += (rand() % 3);
 	}
 
-	if (waveCount % 5 == 0)
+	// Spawn items if the correct waves
+	if (waveCount % 5 == 0 && waveCount > 9)
 	{
-		heals.push_back(new HealthItem);
-		heals[heals.size() - 1]->Spawn();
+		heals.Spawn();
+	}
+	if (waveCount % 4 == 0 && waveCount > 9 && !power.GetAlive())
+	{
+		power.Spawn();
 	}
 
 	// Keep obstacles out of the introductory waves
@@ -333,9 +348,37 @@ void LevelScreen::NewWave()
 	{
 		// Get half the wave count in order to slowly increase difficulty from this point
 		// Rounding doesn't matter because it only makes a 1 enemy difference
-		enemyCount = waveCount / 2;
+		enemyCount = (floor)((rand() % waveCount / 2) + (rand() % waveCount / 4));
 	}
-	// Current enemy count to detect how many exist
+
+	// Quicker spawns later on
+	if (waveCount >= 6 && waveCount <= 14)
+	{
+		enemyInterval = sf::seconds(2.8f);
+		waveDuration = sf::seconds(60);
+	}
+	else if (waveCount >= 15 && waveCount <= 24)
+	{
+		enemyInterval = sf::seconds(2.6f);
+		waveDuration = sf::seconds(70);
+	}
+	else if (waveCount >= 25 && waveCount <= 34)
+	{
+		enemyInterval = sf::seconds(2.4f);
+		waveDuration = sf::seconds(80);
+	}
+	else if (waveCount >= 35 && waveCount <= 44)
+	{
+		enemyInterval = sf::seconds(2.2f);
+		waveDuration = sf::seconds(90);
+	}
+	else if (waveCount >= 45 && waveCount <= 50)
+	{
+		enemyInterval = sf::seconds(2.0f);
+		waveDuration = sf::seconds(100);
+	}
+
+	// Current enemy count to detect how many enemies exist
 	currEnemies = enemyCount;
 }
 
@@ -365,6 +408,7 @@ std::string LevelScreen::GetHighScores(int playerWave)
 	int scoresCount = 0;
 	int position = 0;
 	bool startWaveCount = true;
+	bool added = false;
 
 	std::string bodyText = "";
 
@@ -404,9 +448,10 @@ std::string LevelScreen::GetHighScores(int playerWave)
 
 			// TODO - Print Wave Number
 			savedWave = savedWave + ch;
-			if (waveCount > std::stoi(savedWave))
+			if (waveCount > std::stoi(savedWave) && added == false)
 			{
 				bodyText = AddToHighScores(waveCount, position);
+				added = true;
 			}
 		}
 		else if (ch == '\n')

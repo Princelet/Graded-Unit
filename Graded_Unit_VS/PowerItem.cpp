@@ -1,18 +1,24 @@
-#include "HealthItem.h"
+#include "PowerItem.h"
 #include "AssetManager.h"
 
-HealthItem::HealthItem()
+PowerItem::PowerItem()
 	: Object()
+	, isAlive(false)
 {
-	sprite.setTexture(AssetManager::RequestTexture("Item/Health"));
+	sprite.setTexture(AssetManager::RequestTexture("Item/PowerA"));
+
+	powerAni.push_back(AssetManager::RequestTexture("Item/PowerA"));
+	powerAni.push_back(AssetManager::RequestTexture("Item/PowerB"));
+
 	sprite.setScale(0.2f, 0.2f);
-	collisionOffset = sf::Vector2f(0.0f, 0.0f);
+	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
+	collisionOffset = sf::Vector2f(-21.0f, -22.0f);
 	collisionScale = sf::Vector2f(1.0f, 1.0f);
 	SetPosition(0.0f, 0.0f);
 	sprite.setColor(sf::Color(255, 255, 255, 0));
 }
 
-void HealthItem::HandleCollision(Object& otherObj)
+void PowerItem::HandleCollision(Object& otherObj)
 {
 	sf::Vector2f depth = GetCollisionDepth(otherObj);
 	sf::Vector2f newPos = GetPosition();
@@ -31,8 +37,9 @@ void HealthItem::HandleCollision(Object& otherObj)
 	SetPosition(newPos);
 }
 
-void HealthItem::Spawn()
+void PowerItem::Spawn()
 {
+	isAlive = true;
 	sprite.setColor(sf::Color(255, 255, 255, 255));
 
 	// Randomly get value between 1 and something
@@ -55,8 +62,27 @@ void HealthItem::Spawn()
 	SetPosition(x, y);
 }
 
-void HealthItem::Die()
+void PowerItem::Die()
 {
 	SetPosition(0.0f, 0.0f);
 	sprite.setColor(sf::Color(255, 255, 255, 0));
+	isAlive = false;
+}
+
+void PowerItem::Animate()
+{
+	if (sprite.getTexture() == &powerAni[0])
+		sprite.setTexture(powerAni[1]);
+	else
+		sprite.setTexture(powerAni[0]);
+}
+
+bool PowerItem::GetAlive()
+{
+	return isAlive;
+}
+
+void PowerItem::SetAlive(bool newAlive)
+{
+	isAlive = newAlive;
 }

@@ -11,18 +11,17 @@ Player::Player()
     : Object()
     , velocity()
     , acceleration(100.0f, 100.0f)
-    , currentHealth(20)
-    , maxHealth(30)
+    , currentHealth(10)
+    , maxHealth(20)
     , attack(1)
-    , powerCounter(0)
-    , hasShield(false)
     , atkTimer(10)
     , atkDistance(100)
-    , atkBox(sf::Vector2f(0,0))
+    , atkBox(sf::Vector2f(0, 0))
     , atkCooldown(0)
     , damageCooldown(0)
     , baseAtkCooldown(600)
-    , timePerFrame(sf::seconds(1.0f))
+    , hasPower(false)
+    , powerEnd(sf::seconds(5.0f))
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -31,6 +30,14 @@ Player::Player()
     playerStill.push_back(AssetManager::RequestTexture("PlayerFront"));
     playerStill.push_back(AssetManager::RequestTexture("PlayerBack"));
     playerStill.push_back(AssetManager::RequestTexture("PlayerSide"));
+
+    // Assign textures to the power animation
+    power.setTexture(AssetManager::RequestTexture("Item/PowerA"));
+    powerAni.push_back(AssetManager::RequestTexture("Item/PowerA"));
+    powerAni.push_back(AssetManager::RequestTexture("Item/PowerB"));
+
+    power.setOrigin(power.getTexture()->getSize().x / 2, power.getTexture()->getSize().y / 2);
+    power.setScale(0.15f, 0.15f);
     
     // Set up walking animations
     AssetManager::SetupWalk("Side", playerWalkSide);
@@ -100,9 +107,23 @@ void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
     Attack();
 
     // Power item countdown
-    if (attack < 1)
+    float powerTimeFloat = powerClock.getElapsedTime().asSeconds();
+    if (powerTimeFloat > powerEnd.asSeconds())
     {
-        --powerCounter;
+        hasPower = false;
+    }
+
+    if (hasPower)
+    {
+        power.setPosition(GetPosition().x, GetPosition().y + 20.0f);
+        power.setColor(sf::Color(255, 255, 255, 196));
+        sprite.setColor(sf::Color(160, 255, 160, sprite.getColor().a));
+    }
+    else
+    {
+        sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a));
+        power.setColor(sf::Color(255, 255, 255, 0));
+        power.setPosition(0.0f, 0.0f);
     }
 
     if (damageCooldown > 0)
@@ -110,14 +131,14 @@ void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
         --damageCooldown;
 
         // Invulnerability
-        sprite.setColor(sf::Color(255, 255, 255, 50));
+        sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 50));
     }
     else
-        sprite.setColor(sf::Color(255, 255, 255, 255));
+        sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 255));
 
     if (currentHealth == 0)
     {
-        sprite.setColor(sf::Color(255, 255, 255, 0));
+        sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 0));
     }
 }
 
@@ -161,7 +182,7 @@ int Player::GetDamageCooldown()
 
 void Player::ResetDamageCooldown()
 {
-    damageCooldown = 500;
+    damageCooldown = 400;
 }
 
 int Player::GetHealth()
@@ -169,21 +190,37 @@ int Player::GetHealth()
     return currentHealth;
 }
 
+int Player::GetAttack()
+{
+    if (hasPower)
+    {
+        return 5;
+    }
+    else
+        return 1;
+}
+
+bool Player::GetHasPower()
+{
+    return hasPower;
+}
+
+sf::Sprite Player::GetPlayerPower()
+{
+    return power;
+}
+
 void Player::PickUp(std::string itemName)
 {
     // Activate correct ability for item
     if (itemName == "health" && currentHealth != maxHealth)
     {
-        currentHealth += 5;
+        currentHealth += 2;
     }
     if (itemName == "power")
     {
-        attack = 9;
-        powerCounter = 1000;
-    }
-    if (itemName == "shield")
-    {
-        hasShield = true;
+        hasPower = true;
+        powerClock.restart();
     }
 }
 
@@ -263,87 +300,90 @@ void Player::Attack()
     }
 }
 
-void Player::TakeDamage()
+void Player::TakeDamage(int damage)
 {
-    --currentHealth;
+    currentHealth -= damage;
 }
 
-void Player::Animate(sf::Clock clock)
+void Player::Animate()
 {
     std::string lastPressed;
 
-    sf::Time timePassedThisFrame = clock.getElapsedTime();
-    if (timePassedThisFrame >= timePerFrame)
+    // For each direction, set scale and texture
+    // If continuously going same direction, alternate the sprite used
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        clock.restart();
-
-        // For each direction, set scale and texture
-        // If continuously going same direction, alternate the sprite used
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        sprite.setScale(0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkDown[0])
+            sprite.setTexture(playerWalkDown[1]);
+        else
+            sprite.setTexture(playerWalkDown[0]);
+        lastPressed = "Down";
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        sprite.setScale(0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkUp[0])
+            sprite.setTexture(playerWalkUp[1]);
+        else
+            sprite.setTexture(playerWalkUp[0]);
+        lastPressed = "Up";
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        sprite.setScale(0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkSide[0])
+            sprite.setTexture(playerWalkSide[1]);
+        else if (sprite.getTexture() == &playerWalkSide[1])
+            sprite.setTexture(playerStill[2]);
+        else
+            sprite.setTexture(playerWalkSide[0]);
+        lastPressed = "Left";
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        sprite.setScale(-0.25f, 0.25f);
+        if (sprite.getTexture() == &playerWalkSide[0])
+            sprite.setTexture(playerWalkSide[1]);
+        else if (sprite.getTexture() == &playerWalkSide[1])
+            sprite.setTexture(playerStill[2]);
+        else
+            sprite.setTexture(playerWalkSide[0]);
+        lastPressed = "Right";
+    }
+    else
+    {
+        // Set Still Sprite and Scale based on last pressed key
+        // 0 = Down, 1 = Up, 2 = Side
+        if (lastPressed == "Up")
         {
             sprite.setScale(0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkDown[0])
-                sprite.setTexture(playerWalkDown[1]);
-            else
-                sprite.setTexture(playerWalkDown[0]);
-            lastPressed = "Down";
+            sprite.setTexture(playerStill[0]);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        else if (lastPressed == "Down")
         {
             sprite.setScale(0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkUp[0])
-                sprite.setTexture(playerWalkUp[1]);
-            else
-                sprite.setTexture(playerWalkUp[0]);
-            lastPressed = "Up";
+            sprite.setTexture(playerStill[1]);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        else if (lastPressed == "Left")
         {
             sprite.setScale(0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkSide[0])
-                sprite.setTexture(playerWalkSide[1]);
-            else if (sprite.getTexture() == &playerWalkSide[1])
-                sprite.setTexture(playerStill[2]);
-            else
-                sprite.setTexture(playerWalkSide[0]);
-            lastPressed = "Left";
+            sprite.setTexture(playerStill[2]);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        else if (lastPressed == "Right")
         {
             sprite.setScale(-0.25f, 0.25f);
-            if (sprite.getTexture() == &playerWalkSide[0])
-                sprite.setTexture(playerWalkSide[1]);
-            else if (sprite.getTexture() == &playerWalkSide[1])
-                sprite.setTexture(playerStill[2]);
-            else
-                sprite.setTexture(playerWalkSide[0]);
-            lastPressed = "Right";
+            sprite.setTexture(playerStill[2]);
         }
+    }
+
+    // Power animation
+    if (attack > 1)
+    {
+        if (power.getTexture() == &powerAni[0])
+            power.setTexture(powerAni[1]);
         else
-        {
-            // Set Still Sprite and Scale based on last pressed key
-            // 0 = Down, 1 = Up, 2 = Side
-            if (lastPressed == "Up")
-            {
-                sprite.setScale(0.25f, 0.25f);
-                sprite.setTexture(playerStill[0]);
-            }
-            else if (lastPressed == "Down")
-            {
-                sprite.setScale(0.25f, 0.25f);
-                sprite.setTexture(playerStill[1]);
-            }
-            else if (lastPressed == "Left")
-            {
-                sprite.setScale(0.25f, 0.25f);
-                sprite.setTexture(playerStill[2]);
-            }
-            else if (lastPressed == "Right")
-            {
-                sprite.setScale(-0.25f, 0.25f);
-                sprite.setTexture(playerStill[2]);
-            }
-        }
+            power.setTexture(powerAni[0]);
     }
 }
 
