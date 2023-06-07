@@ -85,3 +85,4 @@ Graded Unit Devlog
 - End panel can now appear and game over has a function.
 - High scores currently don't update or display the word wave and have a weird character between the latter scores.
 - Unsure how I'd set up a title screen or name entry, which I really need in order to do high score entry.
+- Fixed the wave timer which didn't reset.
