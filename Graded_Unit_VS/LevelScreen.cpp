@@ -287,6 +287,8 @@ void LevelScreen::NewWave()
 	if (waveCount > 50)
 		GameOver();
 
+	waveTimer.restart();
+
 
 	// Choose random number of blocks
 	int blockCount = (rand() % 15) + 2;
