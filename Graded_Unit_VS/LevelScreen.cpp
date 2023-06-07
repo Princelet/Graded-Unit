@@ -80,6 +80,24 @@ void LevelScreen::Update(sf::Time frameTime)
 			power.Animate();
 		}
 
+
+		if (heals.CheckCollision(player))
+		{
+			player.SetColliding(true);
+			heals.SetColliding(true);
+			player.PickUp("health");
+
+			heals.Die();
+		}
+		if (power.CheckCollision(player))
+		{
+			player.SetColliding(true);
+			power.SetColliding(true);
+			player.PickUp("power");
+
+			power.Die();
+		}
+
 		for (size_t i = 0; i < blocks.size(); ++i)
 		{
 			blocks[i]->Update(frameTime, window);
@@ -112,24 +130,6 @@ void LevelScreen::Update(sf::Time frameTime)
 				heals.HandleCollision(*blocks[i]);
 			}
 
-		}
-
-		if (heals.CheckCollision(player))
-		{
-			player.SetColliding(true);
-			heals.SetColliding(true);
-			player.PickUp("health");
-			
-			heals.Die();
-		}
-
-		if (power.CheckCollision(player))
-		{
-			player.SetColliding(true);
-			power.SetColliding(true);
-			player.PickUp("power");
-
-			power.Die();
 		}
 
 		for (size_t i = 0; i < enemies.size(); ++i)
@@ -190,7 +190,6 @@ void LevelScreen::Update(sf::Time frameTime)
 				enemyInterval = sf::seconds((rand() % 3) + 2);
 			}
 		}
-
 		if (currEnemies == 0)
 		{
 			++waveCount;
