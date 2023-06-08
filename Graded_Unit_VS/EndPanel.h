@@ -29,4 +29,3 @@ private:
 	bool animatingIn;
 	sf::Clock animationClock;
 };
-

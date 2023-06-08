@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Screen;
+class LevelScreen;
+class TitleScreen;
 
 class Game
 {
@@ -13,10 +14,15 @@ public:
     void Update();
     void Draw();
 
+    void SwitchScreen();
+
     sf::RenderWindow* GetWindow();
 
 private:
     sf::RenderWindow window;
     sf::Clock gameClock;
-    Screen* currentScreen;
+    LevelScreen* levelScreen;
+    TitleScreen* titleScreen;
+
+    bool inLevel;
 };

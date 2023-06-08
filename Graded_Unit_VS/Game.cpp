@@ -1,17 +1,21 @@
 #include "Game.h"
 #include "Screen.h"
 #include "LevelScreen.h"
+#include "TitleScreen.h"
 
 Game::Game()
 	: window(sf::VideoMode::getDesktopMode(), "Demon Knight Attack", sf::Style::Titlebar | sf::Style::Close)
 	, gameClock()
-	, currentScreen(nullptr)
+	, titleScreen(nullptr)
+	, levelScreen(nullptr)
+	, inLevel(false)
 {
 	// Window setup
 	window.setMouseCursorVisible(false);
 
 	// TODO: Setup screens
-	currentScreen = new LevelScreen(this);
+	titleScreen = new TitleScreen(this);
+	levelScreen = new LevelScreen(this);
 }
 
 void Game::RunGameLoop()
@@ -44,18 +48,39 @@ void Game::Update()
 	sf::Time frameTime = gameClock.restart();
 
 	// Update current screen
-	if (currentScreen != nullptr)
-		currentScreen->Update(frameTime);
+	if (inLevel)
+	{
+		if (levelScreen != nullptr)
+			levelScreen->Update(frameTime);
+	}
+	else
+	{
+		if (titleScreen != nullptr)
+			titleScreen->Update(frameTime);
+	}
 }
 
 void Game::Draw()
 {
 	window.clear(sf::Color(20, 20, 50));
 
-	if (currentScreen != nullptr)
-		currentScreen->Draw(window);
+	if (inLevel)
+	{
+		if (levelScreen != nullptr)
+			levelScreen->Draw(window);
+	}
+	else
+	{
+		if (titleScreen != nullptr)
+			titleScreen->Draw(window);
+	}
 
 	window.display();
+}
+
+void Game::SwitchScreen()
+{
+	inLevel = !inLevel;
 }
 
 sf::RenderWindow* Game::GetWindow()

@@ -86,3 +86,7 @@ Graded Unit Devlog
 - High scores currently don't update or display the word wave and have a weird character between the latter scores.
 - Unsure how I'd set up a title screen or name entry, which I really need in order to do high score entry.
 - Fixed the wave timer which didn't reset.
+
+8/6
+- Started setup for title screen. Currently doesn't work and nothing is drawn.
+- A little lost on why New Wave is triggering when the level screen isn't updating.

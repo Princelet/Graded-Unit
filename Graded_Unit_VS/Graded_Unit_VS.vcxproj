@@ -33,6 +33,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PowerItem.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="TitleScreen.cpp" />
     <ClCompile Include="VectorHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +50,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PowerItem.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="TitleScreen.h" />
     <ClInclude Include="VectorHelper.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
