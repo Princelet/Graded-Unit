@@ -23,9 +23,9 @@ public:
 
 	sf::RectangleShape GetArena();
 	int GetWaveCount();
+	void Restart();
 
 private:
-	void Restart();
 	void NewWave();
 	void GameOver();
 

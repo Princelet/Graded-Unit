@@ -8,7 +8,7 @@ Game::Game()
 	, gameClock()
 	, titleScreen(nullptr)
 	, levelScreen(nullptr)
-	, inLevel(false)
+	, inLevel(true)
 {
 	// Window setup
 	window.setMouseCursorVisible(false);
@@ -81,6 +81,10 @@ void Game::Draw()
 void Game::SwitchScreen()
 {
 	inLevel = !inLevel;
+	if (inLevel)
+	{
+		levelScreen->Restart();
+	}
 }
 
 sf::RenderWindow* Game::GetWindow()

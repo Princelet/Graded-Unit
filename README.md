@@ -90,3 +90,5 @@ Graded Unit Devlog
 8/6
 - Started setup for title screen. Currently doesn't work and nothing is drawn.
 - A little lost on why New Wave is triggering when the level screen isn't updating.
+- Solved the new wave issue! It was happening on construction instead of moving over.
+- Title screen now draws, but nothing is really in the right place.

@@ -37,12 +37,21 @@ void TitleScreen::Update(sf::Time frameTime)
 
 void TitleScreen::Draw(sf::RenderTarget& target)
 {
+	target.draw(background);
+
 	if (currSelected == true)
 	{
 		selectionIcon.setPosition(300.0f, 300.0f);
 	}
 	else
 		selectionIcon.setPosition(300.0f, 500.0f);
+
+	target.draw(selectionIcon);
+
+	target.draw(titleText);
+	target.draw(startText);
+	target.draw(infoText);
+	target.draw(quitText);
 
 	target.draw(selectionIcon);
 }

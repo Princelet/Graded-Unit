@@ -23,6 +23,7 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, enemyInterval(sf::seconds(3))
 	, waveDuration(sf::seconds(50))
 	, timePerFrame(sf::seconds(0.25f))
+	, blockCount(0)
 {
 	AssetManager::SetupText(waveText, "GameFont", sf::Color::Cyan, "Wave X");
 	AssetManager::SetupText(timerText, "GameFont", sf::Color::Cyan, "Time: ");
@@ -43,8 +44,6 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	banner.scale(4.0f, 4.0f);
 	banner.setPosition(window->getSize().x / 2, banner.getTexture()->getSize().y / 2 + 100.0f);
 	banner.setOrigin(banner.getTexture()->getSize().x / 2, banner.getTexture()->getSize().y / 2);
-
-	Restart();
 }
 
 void LevelScreen::Update(sf::Time frameTime)
@@ -55,7 +54,7 @@ void LevelScreen::Update(sf::Time frameTime)
 		float remainingTimeFloat = waveDuration.asSeconds() - waveTimeFloat;
 		timerText.setString("Time: " + std::to_string((int)ceil(remainingTimeFloat)));
 
-		if (remainingTimeFloat == 0)
+		if (remainingTimeFloat <= 0)
 		{
 			GameOver();
 		}
