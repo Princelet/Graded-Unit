@@ -92,3 +92,9 @@ Graded Unit Devlog
 - A little lost on why New Wave is triggering when the level screen isn't updating.
 - Solved the new wave issue! It was happening on construction instead of moving over.
 - Title screen now draws, but nothing is really in the right place.
+
+10/6
+- Enemy attacks should really move with the enemy, they are also randomly directed despite having a set direction?
+- Screen size differences don't work with banner or block spawning.
+- Cooldowns aren't obvious to the player, found myself pressing the keys and nothing happens because I don't have a display of delay.
+- Player attacks are barely visible which can cause confusion.

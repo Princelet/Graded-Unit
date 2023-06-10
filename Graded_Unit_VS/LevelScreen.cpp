@@ -44,6 +44,8 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	banner.scale(4.0f, 4.0f);
 	banner.setPosition(window->getSize().x / 2, banner.getTexture()->getSize().y / 2 + 100.0f);
 	banner.setOrigin(banner.getTexture()->getSize().x / 2, banner.getTexture()->getSize().y / 2);
+
+	player.SetPosition(window->getSize().x / 2, window->getSize().y / 2);
 }
 
 void LevelScreen::Update(sf::Time frameTime)
