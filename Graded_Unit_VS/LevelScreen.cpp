@@ -357,7 +357,14 @@ void LevelScreen::NewWave()
 	{
 		// Get half the wave count in order to slowly increase difficulty from this point
 		// Rounding doesn't matter because it only makes a 1 enemy difference
-		enemyCount = (floor)((rand() % waveCount / 2) + (rand() % waveCount / 4));
+
+		// Fallback single enemy wave
+		if (waveCount > 0)
+		{
+			enemyCount = (floor)((rand() % waveCount / 2) + (rand() % waveCount / 4));
+		}
+		else
+			enemyCount = 1;
 	}
 
 	// Quicker spawns later on

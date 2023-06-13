@@ -8,7 +8,7 @@ Game::Game()
 	, gameClock()
 	, titleScreen(nullptr)
 	, levelScreen(nullptr)
-	, inLevel(false)
+	, inLevel(true)
 {
 	// Window setup
 	window.setMouseCursorVisible(false);
