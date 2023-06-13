@@ -140,6 +140,12 @@ void LevelScreen::Update(sf::Time frameTime)
 				enemies[i]->Update(frameTime, window, player.GetPosition());
 				enemies[i]->SetColliding(false);
 
+				if (enemies[i]->CheckCollision(player))
+				{
+					player.SetColliding(true);
+					enemies[i]->SetColliding(true);
+					player.HandleCollision(*enemies[i]);
+				}
 
 				if (enemies[i]->CheckCollision(player.GetAttackBox()))
 				{
@@ -261,6 +267,7 @@ int LevelScreen::GetWaveCount()
 
 void LevelScreen::Restart()
 {
+	waveCount = 0;
 	player.SetPosition(500.0f, 500.0f);
 	gameRunning = true;
 

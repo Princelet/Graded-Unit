@@ -98,3 +98,11 @@ Graded Unit Devlog
 - Screen size differences don't work with banner or block spawning.
 - Cooldowns aren't obvious to the player, found myself pressing the keys and nothing happens because I don't have a display of delay.
 - Player attacks are barely visible which can cause confusion.
+
+13/6
+- Title screen generally complete.
+- The icon doesn't move so Quit cannot currently be selected as far as I'm aware.
+- Background image would be nice, but not a necessity to be honest.
+- Controls info should be added.
+- I'd like to figure out how to scale the game to the screen size, but I'm unsure how this would work. It isn't required but different resolutions make blocks useless and the game a lot easier due to how much space is available.
+- Game over seems to print the new scores as it should but not before printing the direct text first...
