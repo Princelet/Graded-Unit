@@ -28,6 +28,7 @@ TitleScreen::TitleScreen(Game* newGamePointer)
 		"They'll be attacking from all sides!\nRemember to watch out for their witch's obstacles!");
 	AssetManager::SetupText(quitText, "GameFont", sf::Color::Cyan, "Quit Game");
 
+
 	titleText.setScale(1.5f, 1.5f);
 	titleText.setPosition((window->getSize().x / 2.0f) - (titleText.getLocalBounds().width / 2.0f) - 20.0f, 100.0f);
 	startText.setPosition(600.0f, window->getSize().y / 2 - 10.0f);

@@ -23,9 +23,10 @@ private:
 
     sf::Text titleText;
     sf::Text startText;
+    sf::Text quitText;
+
     sf::Text infoText;
     sf::Text storyText;
-    sf::Text quitText;
 
     bool currSelected;
 };
