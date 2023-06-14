@@ -14,7 +14,7 @@ Player::Player()
     , currentHealth(10)
     , maxHealth(20)
     , attack(1)
-    , atkTimer(10)
+    , atkTimer(100)
     , atkDistance(100)
     , atkBox(sf::Vector2f(0, 0))
     , atkCooldown(0)
@@ -150,14 +150,14 @@ void Player::HandleCollision(Object& otherObj)
     if (abs(depth.x) < abs(depth.y))
     {
         // Move in x direction
-        newPos.x += depth.x * 1.1f;
+        newPos.x += depth.x * 2.0f;
         velocity.x = 0;
         acceleration.x = 0;
     }
     else
     {
         // Move in y direction
-        newPos.y += depth.y * 1.1f;
+        newPos.y += depth.y * 2.0f;
         velocity.y = 0;
         acceleration.y = 0;
     }
@@ -228,7 +228,8 @@ void Player::Attack()
 {
     if (atkCooldown <= 0)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::I) || sf::Keyboard::isKeyPressed(sf::Keyboard::O) || sf::Keyboard::isKeyPressed(sf::Keyboard::P) ||
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
         {
             // Upward attack
             atkTimer = 10;
@@ -237,7 +238,7 @@ void Player::Attack()
             atkBox.SetRotation(atkDir);
             atkBox.Show();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
         {
             // Downward attack
             atkTimer = 10;
@@ -246,7 +247,7 @@ void Player::Attack()
             atkBox.SetRotation(atkDir);
             atkBox.Show();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
         {
             // Left attack
             atkTimer = 10;
@@ -255,7 +256,7 @@ void Player::Attack()
             atkBox.SetRotation(atkDir);
             atkBox.Show();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::L) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
         {
             // Right attack
             atkTimer = 10;
@@ -273,19 +274,19 @@ void Player::Attack()
     // Outside so it sticks while it's alive
     if (atkDir == "up")
     {
-        atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y - atkDistance));
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x + 30.0f, GetPosition().y - atkDistance));
     }
     if (atkDir == "down")
     {
-        atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y + atkDistance));
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x + 30.0f, GetPosition().y + atkDistance));
     }
     if (atkDir == "left")
     {
-        atkBox.SetPosition(sf::Vector2f(GetPosition().x - atkDistance, GetPosition().y));
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x - atkDistance, GetPosition().y + 20.0f));
     }
     if (atkDir == "right")
     {
-        atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y));
+        atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y + 20.0f));
     }
 
     if (atkTimer > 0)
@@ -394,19 +395,19 @@ void Player::UpdateAcceleration()
     // Update acceleration
     acceleration.x = 0;
     acceleration.y = 0;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
         acceleration.x = -ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
         acceleration.x = ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
         acceleration.y = -ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
         acceleration.y = ACCEL;
     }

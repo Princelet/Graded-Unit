@@ -4,16 +4,16 @@
 #include "TitleScreen.h"
 
 Game::Game()
-	: window(sf::VideoMode::getDesktopMode(), "Demon Knight Attack", sf::Style::Titlebar | sf::Style::Close)
+	: window(sf::VideoMode(1920, 1080), "Demon Knight Attack", sf::Style::Titlebar | sf::Style::Close)
 	, gameClock()
 	, titleScreen(nullptr)
 	, levelScreen(nullptr)
-	, inLevel(true)
+	, inLevel(false)
 {
 	// Window setup
 	window.setMouseCursorVisible(false);
 
-	// TODO: Setup screens
+	// Setup screens
 	titleScreen = new TitleScreen(this);
 	levelScreen = new LevelScreen(this);
 }
@@ -80,7 +80,11 @@ void Game::Draw()
 
 void Game::SwitchScreen()
 {
-	inLevel = !inLevel;
+	if (inLevel == true)
+		inLevel = false;
+	else
+		inLevel = true;
+
 	if (inLevel)
 	{
 		levelScreen->Restart();

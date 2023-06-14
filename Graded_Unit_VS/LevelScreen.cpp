@@ -8,6 +8,7 @@
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
+	, gamePointer(newGamePointer)
 	, player()
 	, gameRunning(true)
 	, waveCount(0)
@@ -21,19 +22,26 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, healthText()
 	, enemyText()
 	, enemyInterval(sf::seconds(3))
-	, waveDuration(sf::seconds(50))
+	, waveDuration(sf::seconds(40))
 	, timePerFrame(sf::seconds(0.25f))
 	, blockCount(0)
+	, endDelay(2000)
 {
-	AssetManager::SetupText(waveText, "GameFont", sf::Color::Cyan, "Wave X");
-	AssetManager::SetupText(timerText, "GameFont", sf::Color::Cyan, "Time: ");
-	AssetManager::SetupText(healthText, "GameFont", sf::Color::Cyan, "HP: ");
-	AssetManager::SetupText(enemyText, "GameFont", sf::Color::Cyan, "Enemies: ");
+	// Setup text and objects
+	AssetManager::SetupText(waveText, "GameFont", sf::Color::Yellow, "Wave X");
+	AssetManager::SetupText(timerText, "GameFont", sf::Color::Yellow, "Time: ");
+	AssetManager::SetupText(healthText, "GameFont", sf::Color::Yellow, "HP: ");
+	AssetManager::SetupText(enemyText, "GameFont", sf::Color::Yellow, "Enemies: ");
 
 	waveText.setPosition((window->getSize().x / 2.0f) - (waveText.getLocalBounds().width / 2.0f) - 20.0f, 75.0f);
 	timerText.setPosition(window->getSize().x - 300.0f, 60.0f);
 	healthText.setPosition(20.0f, 160.0f);
 	enemyText.setPosition(20.0f, 60.0f);
+
+	waveText.setOutlineThickness(2.0f);
+	timerText.setOutlineThickness(2.0f);
+	healthText.setOutlineThickness(2.0f);
+	enemyText.setOutlineThickness(2.0f);
 
 	rectangle.setPosition(window->getSize().x / 2, window->getSize().y / 2 + 100.0f);
 	rectangle.setSize(sf::Vector2f(window->getSize().x - 400.0f, window->getSize().y - 300.0f));
@@ -46,6 +54,11 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	banner.setOrigin(banner.getTexture()->getSize().x / 2, banner.getTexture()->getSize().y / 2);
 
 	player.SetPosition(window->getSize().x / 2, window->getSize().y / 2);
+
+	// Stream Music
+	gameMusic.openFromFile("Assets/Audio/ingame.wav");
+	gameMusic.setVolume(25);
+	gameMusic.setLoop(true);
 }
 
 void LevelScreen::Update(sf::Time frameTime)
@@ -80,7 +93,6 @@ void LevelScreen::Update(sf::Time frameTime)
 			player.Animate();
 			power.Animate();
 		}
-
 
 		if (heals.CheckCollision(player))
 		{
@@ -144,13 +156,13 @@ void LevelScreen::Update(sf::Time frameTime)
 				{
 					player.SetColliding(true);
 					enemies[i]->SetColliding(true);
-					player.HandleCollision(*enemies[i]);
+					enemies[i]->HandleCollision(player);
 				}
 
 				if (enemies[i]->CheckCollision(player.GetAttackBox()))
 				{
 					player.GetAttackBox().SetColliding(true);
-					
+
 					if (enemies[i]->GetDamageCooldown() == 0)
 					{
 						enemies[i]->ResetDamageCooldown();
@@ -210,8 +222,21 @@ void LevelScreen::Update(sf::Time frameTime)
 	}
 	else
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-			Restart();
+		if (endDelay > 0)
+			--endDelay;
+
+		if ((sf::Keyboard::isKeyPressed(sf::Keyboard::I) || sf::Keyboard::isKeyPressed(sf::Keyboard::J) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::L) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::O) || sf::Keyboard::isKeyPressed(sf::Keyboard::P) ||
+
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
+
+			&& endDelay == 0)
+		{
+			gamePointer->SwitchScreen();
+		}
 	}
 }
 
@@ -265,9 +290,16 @@ int LevelScreen::GetWaveCount()
 	return waveCount;
 }
 
+bool LevelScreen::GetGameRunning()
+{
+	return gameRunning;
+}
+
 void LevelScreen::Restart()
 {
-	waveCount = 0;
+	gameMusic.play();
+
+	waveCount = 1;
 	player.SetPosition(500.0f, 500.0f);
 	gameRunning = true;
 
@@ -337,6 +369,7 @@ void LevelScreen::NewWave()
 
 	// Hardcoded enemy counts
 	// If anything else, figure it out
+	/*
 	if (waveCount == 1)
 	{
 		enemyCount = 1;
@@ -353,19 +386,21 @@ void LevelScreen::NewWave()
 	{
 		enemyCount = 4;
 	}
+	else if (waveCount > 9 && waveCount < 13)
+	{
+		enemyCount = 10;
+	}
+	else if (waveCount > 12)
+	{
+		enemyCount = 9 + (floor)(waveCount / 4);
+	}
 	else
 	{
-		// Get half the wave count in order to slowly increase difficulty from this point
-		// Rounding doesn't matter because it only makes a 1 enemy difference
-
-		// Fallback single enemy wave
-		if (waveCount > 0)
-		{
-			enemyCount = (floor)((rand() % waveCount / 2) + (rand() % waveCount / 4));
-		}
-		else
-			enemyCount = 1;
+		// Fallback value
+		enemyCount = 1;
 	}
+	*/
+	enemyCount = 1;
 
 	// Quicker spawns later on
 	if (waveCount >= 6 && waveCount <= 14)
@@ -376,22 +411,22 @@ void LevelScreen::NewWave()
 	else if (waveCount >= 15 && waveCount <= 24)
 	{
 		enemyInterval = sf::seconds(2.6f);
-		waveDuration = sf::seconds(70);
+		waveDuration = sf::seconds(80);
 	}
 	else if (waveCount >= 25 && waveCount <= 34)
 	{
 		enemyInterval = sf::seconds(2.4f);
-		waveDuration = sf::seconds(80);
+		waveDuration = sf::seconds(100);
 	}
 	else if (waveCount >= 35 && waveCount <= 44)
 	{
 		enemyInterval = sf::seconds(2.2f);
-		waveDuration = sf::seconds(90);
+		waveDuration = sf::seconds(120);
 	}
 	else if (waveCount >= 45 && waveCount <= 50)
 	{
 		enemyInterval = sf::seconds(2.0f);
-		waveDuration = sf::seconds(100);
+		waveDuration = sf::seconds(140);
 	}
 
 	// Current enemy count to detect how many enemies exist
@@ -400,6 +435,9 @@ void LevelScreen::NewWave()
 
 void LevelScreen::GameOver()
 {
+	gameMusic.stop();
+
+	endDelay = 2000;
 	gameRunning = false;
 
 	// Get High Scores
@@ -417,18 +455,28 @@ void LevelScreen::GameOver()
 
 std::string LevelScreen::GetHighScores(int playerWave)
 {
+	struct ScoreEntry
+	{
+		std::string name;
+		int wave = 0;
+	};
+
+	std::vector<ScoreEntry> scores;
+	ScoreEntry newScore;
+
 	// Open the level file
 	std::ifstream inFile;
 	inFile.open("Assets/HighScores.txt");
 
 	int scoresCount = 0;
 	int position = 0;
-	bool startWaveCount = true;
+
 	bool added = false;
 
-	std::string bodyText = "";
-
-	std::string savedWave;
+	std::string bodyText;
+	std::string savedName = "";
+	std::string savedWave = "";
+	std::string playerName = "";
 
 	// Make sure the file was actually opened
 	if (!inFile)
@@ -449,36 +497,28 @@ std::string LevelScreen::GetHighScores(int playerWave)
 			ch == 'O' || ch == 'P' || ch == 'Q' || ch == 'R' || ch == 'S' || ch == 'T' || ch == 'U' || 
 			ch == 'V' || ch == 'W' || ch == 'X' || ch == 'Y' || ch == 'Z' || ch == ' ')
 		{
-			bodyText = bodyText + ch;
+			savedName = savedName + ch;
 		}
 		else if (ch == '0' || ch == '1' || ch == '2' || ch == '3' || ch == '4' || 
 			ch == '5' || ch == '6' || ch == '7' || ch == '8' || ch == '9')
 		{
-			if (startWaveCount)
-			{
-				bodyText = bodyText + "Wave";
-				startWaveCount = false;
-			}
-
-			bodyText = bodyText + ch;
-
-			// TODO - Print Wave Number
 			savedWave = savedWave + ch;
-			if (waveCount > std::stoi(savedWave) && added == false)
-			{
-				bodyText = AddToHighScores(waveCount, position);
-				added = true;
-			}
 		}
 		else if (ch == '\n')
 		{
-			bodyText = bodyText + ch;
+			// Add name and wave to high score vector
+			newScore.name = savedName;
+			newScore.wave = std::stoi(savedWave);
+			scores.push_back(newScore);
+
+			// Zero them out
+			newScore.name = "";
+			newScore.wave = 0;
+			savedName = "";
+			savedWave = "";
 
 			++scoresCount;
 			++position;
-
-			startWaveCount = true;
-			savedWave = "";
 
 			if (scoresCount == 3)
 			{
@@ -494,62 +534,50 @@ std::string LevelScreen::GetHighScores(int playerWave)
 	// Close the file since we're done
 	inFile.close();
 
-	return bodyText;
-}
-
-std::string LevelScreen::AddToHighScores(int playerWave, int position)
-{
-	// TODO - Get Player Name (3 characters)
-	char playerName1 = 'A';
-	char playerName2 = 'A';
-	char playerName3 = 'A';
-	// i want to do this but how do i do a letter wheel
-	
-
-
-
-	// ----------------------
-	//
-	// TODO - MAKE PLAYER PUT IN NAME ON START-UP!
-	// SOLVES EVERYTHING IM WORKING ON HERE
-	//
-	// ----------------------
-
-
-
-	// Turn the wave counter into individual digits
-	int digit1 = (waveCount / 1) % 10;
-	int digit2 = (waveCount / 10) % 10;
-
-	int linePos = 0;
-
-	std::string newBody;
-
-	// Open the level file
-	std::ifstream inFile;
-	inFile.open("Assets/HighScores.txt");
-
-	char ch;
-	while (inFile.get(ch))
+	// Check if the new score needs to be written
+	for (int i = 0; i < 3; ++i)
 	{
-		// 
-		newBody.push_back(ch);
-		if (ch == '\n')
+		if (playerWave >= scores[i].wave && added == false)
 		{
-			++linePos;
+			char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-			// If in the correct place, add the new score
-			if (linePos == position)
-				newBody.push_back(playerName1 + playerName2 + playerName3 + ' ' + digit1 + digit2);
+			for (int i = 0; i < 3; ++i)
+			{
+				playerName = playerName + letters[rand() % 26];
+			}
 
-			// If there are three scores, stop printing them
-			if (linePos > 3)
-				break;
+			newScore.name = playerName + " ";
+			newScore.wave = playerWave;
+
+			scores.insert(scores.begin() + i, newScore);
+
+			added = true;
 		}
 	}
 
-	// Close the file since we're done
-	inFile.close();
+	for (int i = 0; i < 3; ++i)
+	{
+		bodyText = bodyText + scores[i].name + "- Wave " + std::to_string(scores[i].wave) + "\n";
+	}
 
-	return newBody;
+	if (added == true)
+	{
+		// Open the level file
+		std::ofstream outFile;
+		outFile.open("Assets/HighScores.txt");
+		
+		outFile << scores[0].name + std::to_string(scores[0].wave) + "\n"
+			+ scores[1].name + std::to_string(scores[1].wave) + "\n"
+			+ scores[2].name + std::to_string(scores[2].wave) + "\n";
+
+		outFile.close();
+
+		// Player only assigned name if they get a leaderboard position
+		// If not added, just do plain text instead of normal player name display
+		bodyText = bodyText + "\n\nYou are " + playerName + ".\n\nPress any button\nto exit.";
+	}
+	else
+		bodyText = bodyText + "\n\nTry again!\n\nPress any button\nto exit.";
+
+	return bodyText;
 }

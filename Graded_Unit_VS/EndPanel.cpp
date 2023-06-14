@@ -65,7 +65,7 @@ void EndPanel::SetPosition(sf::Vector2f newPosition)
 
 	float titleX = (background.getGlobalBounds().width - title.getGlobalBounds().width) * 0.5f;
 	title.setPosition(newPosition.x + titleX, newPosition.y + 30);
-	float messageX = (background.getGlobalBounds().width - message.getGlobalBounds().width) * 0.5f;
+	float messageX = (background.getGlobalBounds().width - message.getGlobalBounds().width) * 0.5f - 50.0f;
 	message.setPosition(newPosition.x + messageX, newPosition.y + 150);
 }
 

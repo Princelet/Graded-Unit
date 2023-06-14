@@ -23,14 +23,16 @@ public:
 
 	sf::RectangleShape GetArena();
 	int GetWaveCount();
+	bool GetGameRunning();
 	void Restart();
 
 private:
 	void NewWave();
 	void GameOver();
 
+	Game* gamePointer;
+
 	std::string GetHighScores(int playerWave);
-	std::string AddToHighScores(int playerWave, int position);
 
 	Player player;
 	EndPanel endPanel;
@@ -48,6 +50,7 @@ private:
 	int enemyNo;
 
 	bool gameRunning;
+	int endDelay;
 
 	sf::RenderWindow* window;
 	sf::RectangleShape rectangle;
@@ -66,4 +69,6 @@ private:
 	sf::Time enemyInterval;
 	sf::Time waveDuration;
 	sf::Time timePerFrame;
+
+	sf::Music gameMusic;
 };

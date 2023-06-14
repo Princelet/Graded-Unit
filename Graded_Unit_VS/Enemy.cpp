@@ -97,14 +97,14 @@ void Enemy::HandleCollision(Object& otherObj)
 	if (abs(depth.x) < abs(depth.y))
 	{
 		// Move in x direction
-		newPos.x += depth.x;
+		newPos.x += depth.x * 2.0f;
 		velocity.x = 0;
 		acceleration.x = 0;
 	}
 	else
 	{
 		// Move in y direction
-		newPos.y += depth.y;
+		newPos.y += depth.y * 2.0f;
 		velocity.y = 0;
 		acceleration.y = 0;
 	}

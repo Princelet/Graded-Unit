@@ -106,3 +106,18 @@ Graded Unit Devlog
 - Controls info should be added.
 - I'd like to figure out how to scale the game to the screen size, but I'm unsure how this would work. It isn't required but different resolutions make blocks useless and the game a lot easier due to how much space is available.
 - Game over seems to print the new scores as it should but not before printing the direct text first...
+
+14/6
+- Completed the title screen.
+- Fixed the score listings using a struct and vector.
+- Struggled figuring out how to write to the score file.
+- Set the game to always use 1920x1080 to semi-fix the screen resolution. Game difficulty no longer is affected by screen size.
+- Created 3D title text in Blender.
+- Confused as changing the attack timer doesn't seem to do anything to the instantly vanishing attack.
+- Added enemy collision to player.
+- Enemies could originally throw you out, but now the only collision is the player pushing enemies. While pushing them is possible, it is fair as the enemy can attack and the player ends up walking into it.
+- Added controls for the other pad on the arcade machine. Player can use either and it doesn't really matter.
+- Level screen can't go back to the title screen for some reason?
+- Finished the score saving system.
+- Fixed the title screen issue by adding a delay! As long as a key was still being pressed it skipped straight back to gameplay.
+- Got a bit lost when it comes to audio at first, but music is in the game.

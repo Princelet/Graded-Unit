@@ -21,12 +21,14 @@ private:
     sf::Sprite background;
     sf::Sprite selectionIcon;
 
-    sf::Text titleText;
+    sf::Sprite titleText;
     sf::Text startText;
     sf::Text quitText;
 
-    sf::Text infoText;
-    sf::Text storyText;
+    sf::Text moveText;
+    sf::Text itemText;
 
     bool currSelected;
+    int delay;
+    int delay2;
 };
