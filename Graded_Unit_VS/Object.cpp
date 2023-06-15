@@ -27,7 +27,7 @@ void Object::Draw(sf::RenderTarget& target)
 
 	target.draw(sprite);
 
-	bool drawCollider = true;
+	bool drawCollider = false;
 
 	// If a collision isn't occurring, the collision circle will be green.
 	sf::Color collisionColor = sf::Color::Green;

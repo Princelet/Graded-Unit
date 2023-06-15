@@ -13,7 +13,7 @@ public:
 
     sf::Vector2f GetOldPosition();
     AttackBox GetAttackBox();
-    int GetDamageCooldown();
+    sf::Time GetDamageCooldown();
     void ResetDamageCooldown();
 
     int GetHealth();
@@ -31,6 +31,7 @@ private:
     
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
+	sf::Time timePerFrame;
 
     std::vector<sf::Texture> playerWalkSide;
     std::vector<sf::Texture> playerWalkDown;
@@ -38,16 +39,16 @@ private:
     std::vector<sf::Texture> playerStill;
 
     AttackBox atkBox;
-    int atkTimer;
-    int atkCooldown;
+    sf::Time atkTimer;
+    sf::Time atkCooldown;
+    sf::Time baseAtkCooldown;
+    sf::Time damageCooldown;
     std::string atkDir;
     float atkDistance;
-    int baseAtkCooldown;
 
     int currentHealth;
     int maxHealth;
     int attack;
-    int damageCooldown;
 
     bool hasPower;
     sf::Sprite power;

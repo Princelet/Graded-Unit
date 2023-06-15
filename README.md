@@ -105,7 +105,7 @@ Graded Unit Devlog
 - Background image would be nice, but not a necessity to be honest.
 - Controls info should be added.
 - I'd like to figure out how to scale the game to the screen size, but I'm unsure how this would work. It isn't required but different resolutions make blocks useless and the game a lot easier due to how much space is available.
-- Game over seems to print the new scores as it should but not before printing the direct text first...
+- Game over seems to print the new scores as it should but not before printing the direct text first..
 
 14/6
 - Completed the title screen.
@@ -121,3 +121,14 @@ Graded Unit Devlog
 - Finished the score saving system.
 - Fixed the title screen issue by adding a delay! As long as a key was still being pressed it skipped straight back to gameplay.
 - Got a bit lost when it comes to audio at first, but music is in the game.
+
+15/6
+- Made game fullscreen but also 1080.
+- Set various things to timers instead of frames for slower pcs.
+- Changed the exit key to not conflict the numpad usage.
+- Disabled visibility of bounding boxes.
+- Finally fixed enemy attacking directions.
+- Adjusted current and max health to balance out new timers.
+- Edited enemy attack distances and timers to balance their health values.
+- Fixed the start of block spawning to make it the correct wave instead of the one after.
+- I found that, without bounding boxes, the sword reach of enemies and the player felt unreasonable. I changed it to fit better.

@@ -12,6 +12,8 @@ public:
     void Update(sf::Time frameTime);
     void Draw(sf::RenderTarget& target);
 
+    void ResetDelay();
+
 private:
     void Start();
 
@@ -29,6 +31,8 @@ private:
     sf::Text itemText;
 
     bool currSelected;
-    int delay;
-    int delay2;
+
+    sf::Time delay;
+    sf::Time delay2;
+    sf::Time timePerFrame;
 };

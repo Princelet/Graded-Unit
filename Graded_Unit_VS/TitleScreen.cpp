@@ -7,8 +7,9 @@ TitleScreen::TitleScreen(Game* newGamePointer)
 	, window(newGamePointer->GetWindow())
 	, currSelected(true)
 	, game(newGamePointer)
-	, delay(1000)
-	, delay2(2000)
+	, timePerFrame(sf::seconds(0.01f))
+	, delay(sf::seconds(2.0f))
+	, delay2(sf::seconds(0.0f))
 {
 	// Set Textures
 	// Temp BG texture
@@ -47,12 +48,21 @@ TitleScreen::TitleScreen(Game* newGamePointer)
 
 void TitleScreen::Update(sf::Time frameTime)
 {
-	if (delay2 > 0)
-		--delay2;
+	if (delay2.asSeconds() > 0)
+		delay2 -= timePerFrame;
 	else
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::I) || sf::Keyboard::isKeyPressed(sf::Keyboard::J)
-			|| sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::I) || sf::Keyboard::isKeyPressed(sf::Keyboard::J) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::L) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::O) || sf::Keyboard::isKeyPressed(sf::Keyboard::P) ||
+
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad7) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad9) ||
+
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
 		{
 			if (currSelected == true)
 				Start();
@@ -60,14 +70,15 @@ void TitleScreen::Update(sf::Time frameTime)
 				(*window).close();
 		}
 
-		if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) && delay == 0)
+		if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)
+			|| sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) && delay.asSeconds() == 0)
 		{
 			currSelected = !currSelected;
-			delay = 2000;
+			delay = sf::seconds(2.0f);
 		}
 
-		if (delay > 0)
-			--delay;
+		if (delay.asSeconds() > 0)
+			delay -= timePerFrame;
 
 		if (currSelected == true)
 		{
@@ -91,8 +102,12 @@ void TitleScreen::Draw(sf::RenderTarget& target)
 	target.draw(selectionIcon);
 }
 
+void TitleScreen::ResetDelay()
+{
+	delay2 = sf::seconds(3.0f);
+}
+
 void TitleScreen::Start()
 {
-	delay2 = 2000;
 	game->SwitchScreen();
 }

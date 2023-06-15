@@ -11,16 +11,16 @@ Enemy::Enemy(sf::RenderWindow* newWindow, LevelScreen* newLevel)
 	, enemyType(0)
 	, spawnBounds(250)
 	, spawnClock()
-	, interval(3)
 	, attack(2)
 	, health(1)
 	, speed(2)
-	, damageCooldown(10)
+	, damageCooldown(sf::seconds(2.0f))
 	, atkBox(sf::Vector2f(0, 0))
-	, atkCooldown(1000)
-	, atkDistance(50)
-	, atkTimer(10)
-	, baseAtkCooldown(1500)
+	, atkCooldown(sf::seconds(3.0f))
+	, atkDistance(80)
+	, atkTimer(sf::seconds(0.2f))
+	, baseAtkCooldown(sf::seconds(5.0f))
+	, timePerFrame(sf::seconds(0.01f))
 {
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemyFront"));
 	enemyTextures.push_back(AssetManager::RequestTexture("EnemySide"));
@@ -71,9 +71,9 @@ void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f pl
 		acceleration.y = accel;
 	}
 
-	if (damageCooldown > 0)
+	if (damageCooldown.asSeconds() > 0)
 	{
-		--damageCooldown;
+		damageCooldown -= timePerFrame;
 
 		// Invulnerability
 		sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 50));
@@ -81,9 +81,9 @@ void Enemy::Update(sf::Time frameTime, sf::RenderWindow* window, sf::Vector2f pl
 	else
 		sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 255));
 
-	if (atkCooldown > 0)
+	if (atkCooldown.asSeconds() > 0)
 	{
-		--atkCooldown;
+		atkCooldown -= timePerFrame;
 	}
 	else
 		Attack(playerPos);
@@ -127,14 +127,14 @@ int Enemy::GetAttack()
 	return attack;
 }
 
-int Enemy::GetDamageCooldown()
+sf::Time Enemy::GetDamageCooldown()
 {
 	return damageCooldown;
 }
 
 void Enemy::ResetDamageCooldown()
 {
-	damageCooldown = 500;
+	damageCooldown = sf::seconds(1.5f);
 }
 
 AttackBox Enemy::GetAttackBox()
@@ -198,7 +198,8 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(20, 255, 150, 255));
 		sprite.setScale(0.26f, 0.26f);
 		collisionOffset = sf::Vector2f(-32.0f, -45.0f);
-		baseAtkCooldown = 650;
+		baseAtkCooldown = sf::seconds(3.0f);
+		atkDistance = 100;
 		break;
 
 	case 1:
@@ -208,7 +209,8 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(255, 60, 60, 255));
 		sprite.setScale(0.32f, 0.32f);
 		collisionOffset = sf::Vector2f(-38.0f, -56.0f);
-		baseAtkCooldown = 800;
+		baseAtkCooldown = sf::seconds(3.5f);
+		atkDistance = 150;
 		break;
 
 	case 2:
@@ -218,7 +220,8 @@ void Enemy::Spawn()
 		sprite.setColor(sf::Color(20, 150, 255, 255));
 		sprite.setScale(0.2f, 0.2f);
 		collisionOffset = sf::Vector2f(-24.0f, -34.0f);
-		baseAtkCooldown = 500;
+		baseAtkCooldown = sf::seconds(2.0f);
+		atkDistance = 100;
 		break;
 	}
 	
@@ -275,64 +278,71 @@ void Enemy::TakeDamage(int damage)
 
 void Enemy::Attack(sf::Vector2f playerPos)
 {
-	if (playerPos.x < GetPosition().x)
-	{
-		// Upward attack
-		atkTimer = 10;
-		atkDir = "up";
-		atkCooldown = baseAtkCooldown;
-		atkBox.SetRotation("up");
-		atkBox.Show();
-	}
-	if (playerPos.y < GetPosition().y)
-	{
-		// Downward attack
-		atkTimer = 10;
-		atkDir = "down";
-		atkCooldown = baseAtkCooldown;
-		atkBox.SetRotation("down");
-		atkBox.Show();
-	}
-	if (playerPos.x > GetPosition().x)
-	{
-		// Left attack
-		atkTimer = 10;
-		atkDir = "left";
-		atkCooldown = baseAtkCooldown;
-		atkBox.SetRotation("left");
-		atkBox.Show();
-	}
-	if (playerPos.y > GetPosition().y)
-	{
-		// Right attack
-		atkTimer = 10;
-		atkDir = "right";
-		atkCooldown = baseAtkCooldown;
-		atkBox.SetRotation("right");
-		atkBox.Show();
-	}
+	int xOrY = (rand() % 2);
 
+	if (xOrY == 1) 
+	{
+		if (playerPos.x < GetPosition().x)
+		{
+			// Left attack
+			atkTimer = sf::seconds(1.5f);
+			atkDir = "left";
+			atkCooldown = baseAtkCooldown;
+			atkBox.SetRotation("left");
+			atkBox.Show();
+		}
+		if (playerPos.x > GetPosition().x)
+		{
+			// Right attack
+			atkTimer = sf::seconds(1.5f);
+			atkDir = "right";
+			atkCooldown = baseAtkCooldown;
+			atkBox.SetRotation("right");
+			atkBox.Show();
+		}
+	}
+	else
+	{
+		if (playerPos.y < GetPosition().y)
+		{
+			// Upward attack
+			atkTimer = sf::seconds(1.5f);
+			atkDir = "up";
+			atkCooldown = baseAtkCooldown;
+			atkBox.SetRotation("up");
+			atkBox.Show();
+		}
+		if (playerPos.y > GetPosition().y)
+		{
+			// Downward attack
+			atkTimer = sf::seconds(1.5f);
+			atkDir = "down";
+			atkCooldown = baseAtkCooldown;
+			atkBox.SetRotation("down");
+			atkBox.Show();
+		}
+	}
 	// Outside so it sticks while it's alive
 	if (atkDir == "up")
 	{
-		atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y - atkDistance));
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x + 30.0f, GetPosition().y - atkDistance));
 	}
 	if (atkDir == "down")
 	{
-		atkBox.SetPosition(sf::Vector2f(GetPosition().x, GetPosition().y + atkDistance));
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x + 30.0f, GetPosition().y + atkDistance));
 	}
 	if (atkDir == "left")
 	{
-		atkBox.SetPosition(sf::Vector2f(GetPosition().x - atkDistance, GetPosition().y));
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x - atkDistance, GetPosition().y + 20.0f));
 	}
 	if (atkDir == "right")
 	{
-		atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y));
+		atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y + 20.0f));
 	}
 
-	if (atkTimer > 0)
+	if (atkTimer.asSeconds() > 0)
 	{
-		--atkTimer;
+		atkTimer -= timePerFrame;
 	}
 	else
 	{

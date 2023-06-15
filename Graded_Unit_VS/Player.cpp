@@ -11,17 +11,18 @@ Player::Player()
     : Object()
     , velocity()
     , acceleration(100.0f, 100.0f)
-    , currentHealth(10)
-    , maxHealth(20)
+    , currentHealth(20)
+    , maxHealth(30)
     , attack(1)
-    , atkTimer(100)
-    , atkDistance(100)
+    , atkTimer(sf::seconds(1.0f))
+    , atkDistance(110)
     , atkBox(sf::Vector2f(0, 0))
-    , atkCooldown(0)
-    , damageCooldown(0)
-    , baseAtkCooldown(600)
+    , atkCooldown(sf::seconds(2.0f))
+    , damageCooldown(sf::seconds(1.0f))
+    , baseAtkCooldown(sf::seconds(3.0f))
     , hasPower(false)
-    , powerEnd(sf::seconds(5.0f))
+    , powerEnd(sf::seconds(7.0f))
+    , timePerFrame(sf::seconds(0.01f))
 {
     // Starting texture
     sprite.setTexture(AssetManager::RequestTexture("PlayerFront"));
@@ -126,9 +127,9 @@ void Player::Update(sf::Time frameTime, sf::RenderWindow* window)
         power.setPosition(0.0f, 0.0f);
     }
 
-    if (damageCooldown > 0)
+    if (damageCooldown.asSeconds() > 0)
     {
-        --damageCooldown;
+        damageCooldown -= timePerFrame;
 
         // Invulnerability
         sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 50));
@@ -175,14 +176,14 @@ AttackBox Player::GetAttackBox()
     return atkBox;
 }
 
-int Player::GetDamageCooldown()
+sf::Time Player::GetDamageCooldown()
 {
     return damageCooldown;
 }
 
 void Player::ResetDamageCooldown()
 {
-    damageCooldown = 400;
+    damageCooldown = sf::seconds(3.0f);
 }
 
 int Player::GetHealth()
@@ -215,7 +216,7 @@ void Player::PickUp(std::string itemName)
     // Activate correct ability for item
     if (itemName == "health" && currentHealth != maxHealth)
     {
-        currentHealth += 2;
+        currentHealth += 3;
     }
     if (itemName == "power")
     {
@@ -226,40 +227,40 @@ void Player::PickUp(std::string itemName)
 
 void Player::Attack()
 {
-    if (atkCooldown <= 0)
+    if (atkCooldown.asSeconds() == 0)
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::I) || sf::Keyboard::isKeyPressed(sf::Keyboard::O) || sf::Keyboard::isKeyPressed(sf::Keyboard::P) ||
-            sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad7) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad9))
         {
             // Upward attack
-            atkTimer = 10;
+            atkTimer = sf::seconds(0.4f);
             atkDir = "up";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
             atkBox.Show();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5))
         {
             // Downward attack
-            atkTimer = 10;
+            atkTimer = sf::seconds(0.4f);
             atkDir = "down";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
             atkBox.Show();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4))
         {
             // Left attack
-            atkTimer = 10;
+            atkTimer = sf::seconds(0.4f);
             atkDir = "left";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
             atkBox.Show();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::L) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::L) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6))
         {
             // Right attack
-            atkTimer = 10;
+            atkTimer = sf::seconds(0.4f);
             atkDir = "right";
             atkCooldown = baseAtkCooldown;
             atkBox.SetRotation(atkDir);
@@ -268,7 +269,7 @@ void Player::Attack()
     }
     else
     {
-        --atkCooldown;
+        atkCooldown -= timePerFrame;
     }
 
     // Outside so it sticks while it's alive
@@ -289,9 +290,9 @@ void Player::Attack()
         atkBox.SetPosition(sf::Vector2f(GetPosition().x + atkDistance, GetPosition().y + 20.0f));
     }
 
-    if (atkTimer > 0)
+    if (atkTimer.asSeconds() > 0)
     {
-        --atkTimer;
+        atkTimer -= timePerFrame;
     }
     else
     {

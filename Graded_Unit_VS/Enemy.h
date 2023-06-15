@@ -17,7 +17,7 @@ public:
     int GetEnemyType();
     int GetHealth();
     int GetAttack();
-    int GetDamageCooldown();
+    sf::Time GetDamageCooldown();
     void ResetDamageCooldown();
 
     AttackBox GetAttackBox();
@@ -28,23 +28,25 @@ public:
 
 private:
     LevelScreen* level;
+
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
+    sf::Time timePerFrame;
 
     int spawnBounds;
     sf::Clock spawnClock;
-    int interval;
+    sf::Time interval;
     int enemyType;
-    int baseAtkCooldown;
 
-    int damageCooldown;
     int health;
     int attack;
     int speed;
 
     AttackBox atkBox;
-    int atkTimer;
-    int atkCooldown;
+    sf::Time atkTimer;
+    sf::Time atkCooldown;
+    sf::Time damageCooldown;
+    sf::Time baseAtkCooldown;
     std::string atkDir;
     float atkDistance;
 

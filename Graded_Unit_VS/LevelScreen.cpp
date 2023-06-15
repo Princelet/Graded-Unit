@@ -21,11 +21,11 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, timerText()
 	, healthText()
 	, enemyText()
-	, enemyInterval(sf::seconds(3))
-	, waveDuration(sf::seconds(40))
-	, timePerFrame(sf::seconds(0.25f))
+	, enemyInterval(sf::seconds(3.0f))
+	, waveDuration(sf::seconds(40.0f))
+	, timePerFrame(sf::seconds(0.2f))
 	, blockCount(0)
-	, endDelay(2000)
+	, endDelay(sf::seconds(2.0f))
 {
 	// Setup text and objects
 	AssetManager::SetupText(waveText, "GameFont", sf::Color::Yellow, "Wave X");
@@ -163,7 +163,7 @@ void LevelScreen::Update(sf::Time frameTime)
 				{
 					player.GetAttackBox().SetColliding(true);
 
-					if (enemies[i]->GetDamageCooldown() == 0)
+					if (enemies[i]->GetDamageCooldown().asSeconds() == 0)
 					{
 						enemies[i]->ResetDamageCooldown();
 						enemies[i]->TakeDamage(player.GetAttack());
@@ -174,7 +174,7 @@ void LevelScreen::Update(sf::Time frameTime)
 				{
 					enemies[i]->GetAttackBox().SetColliding(true);
 
-					if (player.GetDamageCooldown() == 0)
+					if (player.GetDamageCooldown().asSeconds() == 0)
 					{
 						player.ResetDamageCooldown();
 						player.TakeDamage(enemies[i]->GetAttack());
@@ -222,18 +222,22 @@ void LevelScreen::Update(sf::Time frameTime)
 	}
 	else
 	{
-		if (endDelay > 0)
-			--endDelay;
+		if (endDelay.asSeconds() > 0)
+			endDelay -= timePerFrame;
 
 		if ((sf::Keyboard::isKeyPressed(sf::Keyboard::I) || sf::Keyboard::isKeyPressed(sf::Keyboard::J) ||
 			sf::Keyboard::isKeyPressed(sf::Keyboard::K) || sf::Keyboard::isKeyPressed(sf::Keyboard::L) ||
 			sf::Keyboard::isKeyPressed(sf::Keyboard::O) || sf::Keyboard::isKeyPressed(sf::Keyboard::P) ||
 
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad7) ||
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad9) ||
+
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) ||
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) ||
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) || sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
 
-			&& endDelay == 0)
+			&& endDelay.asSeconds() == 0)
 		{
 			gamePointer->SwitchScreen();
 		}
@@ -326,118 +330,117 @@ void LevelScreen::NewWave()
 
 	if (waveCount > 50)
 		GameOver();
-
-	waveTimer.restart();
-
-
-	// Choose random number of blocks
-	int blockCount = (rand() % 15) + 2;
-	if (waveCount > 20)
-	{
-		blockCount += (rand() % 3);
-	}
-	if (waveCount > 40)
-	{
-		blockCount += (rand() % 3);
-	}
-
-	// Spawn items if the correct waves
-	if (waveCount % 5 == 0 && waveCount > 9)
-	{
-		heals.Spawn();
-	}
-	if (waveCount % 4 == 0 && waveCount > 9 && !power.GetAlive())
-	{
-		power.Spawn();
-	}
-
-	// Keep obstacles out of the introductory waves
-	if (waveCount > 5)
-	{
-		if (blocks.size() < blockCount)
-		{
-			for (int i = 0; i < blockCount; ++i)
-			{
-				blocks.push_back(new Block);
-			}
-			for (size_t i = 0; i < blocks.size(); ++i)
-			{
-				blocks[i]->Spawn();
-			}
-		}
-	}
-
-	// Hardcoded enemy counts
-	// If anything else, figure it out
-	/*
-	if (waveCount == 1)
-	{
-		enemyCount = 1;
-	}
-	else if (waveCount == 2 || waveCount == 3 || waveCount == 4 || waveCount == 6)
-	{
-		enemyCount = 2;
-	}
-	else if (waveCount == 5 || waveCount == 7)
-	{
-		enemyCount = 3;
-	}
-	else if (waveCount == 8 || waveCount == 9)
-	{
-		enemyCount = 4;
-	}
-	else if (waveCount > 9 && waveCount < 13)
-	{
-		enemyCount = 10;
-	}
-	else if (waveCount > 12)
-	{
-		enemyCount = 9 + (floor)(waveCount / 4);
-	}
 	else
 	{
-		// Fallback value
-		enemyCount = 1;
-	}
-	*/
-	enemyCount = 1;
+		waveTimer.restart();
 
-	// Quicker spawns later on
-	if (waveCount >= 6 && waveCount <= 14)
-	{
-		enemyInterval = sf::seconds(2.8f);
-		waveDuration = sf::seconds(60);
-	}
-	else if (waveCount >= 15 && waveCount <= 24)
-	{
-		enemyInterval = sf::seconds(2.6f);
-		waveDuration = sf::seconds(80);
-	}
-	else if (waveCount >= 25 && waveCount <= 34)
-	{
-		enemyInterval = sf::seconds(2.4f);
-		waveDuration = sf::seconds(100);
-	}
-	else if (waveCount >= 35 && waveCount <= 44)
-	{
-		enemyInterval = sf::seconds(2.2f);
-		waveDuration = sf::seconds(120);
-	}
-	else if (waveCount >= 45 && waveCount <= 50)
-	{
-		enemyInterval = sf::seconds(2.0f);
-		waveDuration = sf::seconds(140);
-	}
+		// Choose random number of blocks
+		int blockCount = (rand() % 11) + 2;
+		if (waveCount > 20)
+		{
+			blockCount += (rand() % 4);
+		}
+		if (waveCount > 40)
+		{
+			blockCount += (rand() % 4);
+		}
 
-	// Current enemy count to detect how many enemies exist
-	currEnemies = enemyCount;
+		// Spawn items if the correct waves
+		if (waveCount % 5 == 0)
+		{
+			heals.Spawn();
+		}
+		if (waveCount % 4 == 0 && waveCount > 5 && !power.GetAlive())
+		{
+			power.Spawn();
+		}
+
+		// Keep obstacles out of the introductory waves
+		if (waveCount > 4)
+		{
+			if (blocks.size() < blockCount)
+			{
+				for (int i = 0; i < blockCount; ++i)
+				{
+					blocks.push_back(new Block);
+				}
+				for (size_t i = 0; i < blocks.size(); ++i)
+				{
+					blocks[i]->Spawn();
+				}
+			}
+		}
+
+		// Hardcoded enemy counts
+		// If anything else, figure it out
+		if (waveCount == 1)
+		{
+			enemyCount = 1;
+		}
+		else if (waveCount == 2 || waveCount == 3 || waveCount == 4 || waveCount == 6)
+		{
+			enemyCount = 2;
+		}
+		else if (waveCount == 5 || waveCount == 7)
+		{
+			enemyCount = 3;
+		}
+		else if (waveCount == 8 || waveCount == 9)
+		{
+			enemyCount = 4;
+		}
+		else if (waveCount > 9 && waveCount < 13)
+		{
+			enemyCount = 10;
+		}
+		else if (waveCount > 12)
+		{
+			enemyCount = 9 + (floor)(waveCount / 4);
+		}
+		else
+		{
+			// Fallback value
+			enemyCount = 1;
+		}
+
+
+		// Quicker spawns later on
+		if (waveCount >= 6 && waveCount <= 14)
+		{
+			enemyInterval = sf::seconds(2.8f);
+			waveDuration = sf::seconds(60.0f);
+		}
+		else if (waveCount >= 15 && waveCount <= 24)
+		{
+			enemyInterval = sf::seconds(2.6f);
+			waveDuration = sf::seconds(80.0f);
+		}
+		else if (waveCount >= 25 && waveCount <= 34)
+		{
+			enemyInterval = sf::seconds(2.4f);
+			waveDuration = sf::seconds(100.0f);
+		}
+		else if (waveCount >= 35 && waveCount <= 44)
+		{
+			enemyInterval = sf::seconds(2.2f);
+			waveDuration = sf::seconds(120.0f);
+		}
+		else if (waveCount >= 45 && waveCount <= 50)
+		{
+			enemyInterval = sf::seconds(2.0f);
+			waveDuration = sf::seconds(140.0f);
+		}
+
+		// Current enemy count to detect how many enemies exist
+		currEnemies = enemyCount;
+	}
 }
 
 void LevelScreen::GameOver()
 {
 	gameMusic.stop();
 
-	endDelay = 2000;
+	endDelay = sf::seconds(2.0f);
 	gameRunning = false;
 
 	// Get High Scores

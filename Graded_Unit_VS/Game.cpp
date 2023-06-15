@@ -4,7 +4,7 @@
 #include "TitleScreen.h"
 
 Game::Game()
-	: window(sf::VideoMode(1920, 1080), "Demon Knight Attack", sf::Style::Titlebar | sf::Style::Close)
+	: window(sf::VideoMode(1920, 1080), "Demon Knight Attack", sf::Style::Fullscreen)
 	, gameClock()
 	, titleScreen(nullptr)
 	, levelScreen(nullptr)
@@ -38,7 +38,7 @@ void Game::EventHandling()
 			window.close();
 
 		// Close if Escape pressed
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			window.close();
 	}
 }
@@ -81,7 +81,10 @@ void Game::Draw()
 void Game::SwitchScreen()
 {
 	if (inLevel == true)
+	{
+		titleScreen->ResetDelay();
 		inLevel = false;
+	}
 	else
 		inLevel = true;
 

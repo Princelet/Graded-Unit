@@ -50,7 +50,7 @@ private:
 	int enemyNo;
 
 	bool gameRunning;
-	int endDelay;
+	sf::Time endDelay;
 
 	sf::RenderWindow* window;
 	sf::RectangleShape rectangle;
